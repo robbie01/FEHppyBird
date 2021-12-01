@@ -9,27 +9,27 @@ int main() {
     LCD.SetBackgroundColor(BLACK);
     LCD.Clear();
 
-    int x = 20, y = 20, dx = 2, dy = 2;
+    int x = -1, y = 0, dx = 1, dy = 1;
 
     while (1) {
 	LCD.Clear();
-        LCD.DrawCircle(x, y, 20);
+        LCD.WriteAt("DVD", x, y);
         LCD.Update();
         //Sleep(20);
 	x += dx, y += dy;
-	if (x >= 299) {
+	if (x >= 285) {
 		dx *= -1;
-		x = 299;
-	} else if (x <= 20) {
+		x = 285;
+	} else if (x <= -1) {
 		dx *= -1;
-		x = 20;
+		x = -1;
 	}
-	if (y >= 219) {
+	if (y >= 227) {
 		dy *= -1;
-		y = 219;
-	} else if (y <= 20) {
+		y = 227;
+	} else if (y <= 0) {
 		dy *= -1;
-		y = 20;
+		y = 0;
 	}
         // Never end
     }
