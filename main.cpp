@@ -92,13 +92,8 @@ public:
 	}
 
 	bool checkCollision(Pipe mypipe) {
-		// Gapheight changes to top after robbies update
-		// mypipe.x is left side of pipe
-		// mypipe.gapheight is bottom edge of pipe
-		// mypipe.gapheight + GAPSIZE is top edge of pipe
 		if (
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
-			// Check upper, then lower collision
 			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + GAPSIZE)
 		) {
 			return true;
