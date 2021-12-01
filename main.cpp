@@ -13,6 +13,10 @@ constexpr int GAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
 
+constexpr int BIRDHEIGHT = 20;
+constexpr int BIRDWIDTH = 20;
+constexpr int BIRDXPOS = 150;
+
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
@@ -29,9 +33,10 @@ public:
 };
 
 class Pipe : public GameObject {
-	int gapheight, x;
 	int dead = 0;
 public:
+	int gapheight, x;
+
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {}
 
 	void update() {
@@ -63,8 +68,8 @@ public:
 	void update() {
 		v += GRAVITY;
 		y += v;
-		if (y > SCREENHEIGHT - 21) {
-			y = SCREENHEIGHT - 21;
+		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
+			y = SCREENHEIGHT-BIRDHEIGHT-1;
 			v = 0;
 		} else if (y < 0) {
 			y = 0;
@@ -84,6 +89,21 @@ public:
 		LCD.SetFontColor(0xFFFF00);
 		//LCD.FillRectangle(150, (int)y, 20, 20);
 		LCD.FillCircle(160, y + 10, 10);
+	}
+
+	bool checkCollision(Pipe mypipe) {
+		// Gapheight changes to top after robbies update
+		// mypipe.x is left side of pipe
+		// mypipe.gapheight is bottom edge of pipe
+		// mypipe.gapheight + GAPSIZE is top edge of pipe
+		if (
+			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
+			// Check lower, then upper collision
+			(y + BIRDHEIGHT > SCREENHEIGHT - mypipe.gapheight || y < SCREENHEIGHT - GAPSIZE - mypipe.gapheight)
+		) {
+			return true;
+		}
+		return false;
 	}
 };
 
@@ -139,13 +159,17 @@ int main() {
 	Bird bird(0);
 	DVD dvd;
 
+	bool alive = true;
 	int waitingforup = 0;
 
-	while (1) {
+	while (alive) {
 		LCD.Clear();
 		dvd.render();
 		pipe.render();
 		bird.render();
+		if (bird.checkCollision(pipe)) {
+			alive = false;
+		}
 		LCD.Update();
 		if (LCD.Touch(&touchx, &touchy)) {
 			if (!waitingforup) {
