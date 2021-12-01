@@ -1,14 +1,17 @@
 #include "FEHLCD.h"
-#include "FEHUtility.h"
 #include "FEHRandom.h"
+#include "FEHUtility.h"
 
-constexpr int XMIN = -2;
-constexpr int XMAX = 284;
-constexpr int YMIN = 0;
-constexpr int YMAX = 226;
+constexpr int DVDXMIN = -2;
+constexpr int DVDXMAX = 284;
+constexpr int DVDYMIN = 0;
+constexpr int DVDYMAX = 226;
+constexpr int DVDDXI = 1;
+constexpr int DVDDYI = 1;
 
 constexpr int GAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
+constexpr int PIPEVELOCITY = -2;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
@@ -20,32 +23,44 @@ constexpr int SCREENWIDTH = 320;
 constexpr float GRAVITY = 0.2;
 constexpr float FLAPVELOCITY = -3;
 
-#define RANDOMCOLOR (((Random.RandInt()&0xFF)<<16)|((Random.RandInt()&0xFF)<<8)|((Random.RandInt()&0xFF)<<16))
+#define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
 
-class Renderable {
+class GameObject {
 public:
-	virtual void render() = 0;
+	virtual void update() = 0;
+	virtual void render() const = 0;
+	virtual int is_dead() const = 0;
 };
 
-class Pipe : public Renderable {
+class Pipe : public GameObject {
+	int dead = 0;
 public:
 	int gapheight, x;
 
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {}
 
-	void mod_x(int dx) {
-		x += dx;
+	void update() {
+		if (!dead) {
+			x += PIPEVELOCITY;
+			if (x <= 0)
+				dead = 1;
+		}
 	}
 
-	void render() {
-		// Top pipe
-		LCD.FillRectangle(x, 0, PIPEWIDTH, SCREENHEIGHT-gapheight-GAPSIZE/2);
-		// Bottom pipe
-		LCD.FillRectangle(x, SCREENHEIGHT-gapheight+GAPSIZE/2, PIPEWIDTH, gapheight-GAPSIZE/2);
+	int is_dead() const {
+		return dead;
+	}
+
+	void render() const {
+		if (!dead) {
+			LCD.SetFontColor(0x00AA00);
+			LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
+			LCD.FillRectangle(x, gapheight + GAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - GAPSIZE);
+		}
 	}
 };
 
-class Bird : public Renderable {
+class Bird : public GameObject {
 	float y, v = 0;
 public:
 	Bird(float y) : y(y) {}
@@ -53,8 +68,8 @@ public:
 	void update() {
 		v += GRAVITY;
 		y += v;
-		if (y > SCREENHEIGHT-BIRDHEIGHT) {
-			y = SCREENHEIGHT-BIRDHEIGHT;
+		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
+			y = SCREENHEIGHT-BIRDHEIGHT-1;
 			v = 0;
 		} else if (y < 0) {
 			y = 0;
@@ -62,12 +77,18 @@ public:
 		}
 	}
 
+	int is_dead() const {
+		return 0;
+	}
+
 	void flap() {
 		v = FLAPVELOCITY;
 	}
 
-	void render() {
-		LCD.FillRectangle(BIRDXPOS, (int)y, 20, 20);
+	void render() const {
+		LCD.SetFontColor(0xFFFF00);
+		//LCD.FillRectangle(150, (int)y, 20, 20);
+		LCD.FillCircle(160, y + 10, 10);
 	}
 
 	bool checkCollision(Pipe mypipe) {
@@ -76,7 +97,7 @@ public:
 		// mypipe.gapheight is bottom edge of pipe
 		// mypipe.gapheight + GAPSIZE is top edge of pipe
 		if (
-			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) && 
+			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
 			// Check lower, then upper collision
 			(y + BIRDHEIGHT > SCREENHEIGHT - mypipe.gapheight || y < SCREENHEIGHT - GAPSIZE - mypipe.gapheight)
 		) {
@@ -86,65 +107,83 @@ public:
 	}
 };
 
+class DVD : public GameObject {
+	int x = DVDXMIN, y = DVDYMIN, dx = DVDDXI, dy = DVDDYI;
+	unsigned int color;
+public:
+	DVD() : color(RANDOMCOLOR) {}
+
+	void update() {
+		x += dx, y += dy;
+		if (x >= DVDXMAX) {
+			color = RANDOMCOLOR;
+			dx *= -1;
+			x = DVDXMAX;
+		} else if (x <= DVDXMIN) {
+			color = RANDOMCOLOR;
+			dx *= -1;
+			x = DVDXMIN;
+		}
+		if (y >= DVDYMAX) {
+			color = RANDOMCOLOR;
+			dy *= -1;
+			y = DVDYMAX;
+		} else if (y <= DVDYMIN) {
+			color = RANDOMCOLOR;
+			dy *= -1;
+			y = DVDYMIN;
+		}
+	}
+
+	int is_dead() const {
+		return 0;
+	}
+
+	void render() const {
+		LCD.SetFontColor(color);
+		LCD.WriteAt("DVD", x, y);
+	}
+};
+
 /*
  * Entry point to the application
  */
 int main() {
-    // Clear background
-    LCD.SetBackgroundColor(BLACK);
-    LCD.Clear();
-
-    int x = XMIN, y = YMIN, dx = 1, dy = 1;
-
-    float touchx, touchy;
-    bool alive = true; 
-
-    Pipe pipe(80, SCREENWIDTH);
-    Bird bird(0);
-
-    int waitingforup = 0;
-
-    while (alive) {
+	// Clear background
+	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
-	pipe.render();
-	bird.render();
-	// Check collision
-	if (bird.checkCollision(pipe)) {
-		alive = false;
-	}
-        LCD.WriteAt("DVD", x, y);
-        LCD.Update();
-	if (LCD.Touch(&touchx, &touchy)) {
-		if (!waitingforup) {
-			bird.flap();
-			waitingforup = 1;
+
+	float touchx, touchy;
+
+	Pipe pipe(2, SCREENWIDTH - PIPEWIDTH);
+	Bird bird(0);
+	DVD dvd;
+
+	bool alive = true;
+	int waitingforup = 0;
+
+	while (alive) {
+		LCD.Clear();
+		dvd.render();
+		pipe.render();
+		bird.render();
+		if (bird.checkCollision(pipe)) {
+			alive = false;
 		}
-	} else {
-		waitingforup = 0;
+		LCD.Update();
+		if (LCD.Touch(&touchx, &touchy)) {
+			if (!waitingforup) {
+				bird.flap();
+				waitingforup = 1;
+			}
+		} else {
+			waitingforup = 0;
+		}
+		dvd.update();
+		bird.update();
+		pipe.update();
+		//Sleep(20);
+		// Never end
 	}
-	bird.update();
-	pipe.mod_x(-1);
-        //Sleep(20);
-	x += dx, y += dy;
-	if (x >= XMAX) {
-		LCD.SetFontColor(RANDOMCOLOR);
-		dx *= -1;
-		x = XMAX;
-	} else if (x <= XMIN) {
-		LCD.SetFontColor(RANDOMCOLOR);
-		dx *= -1;
-		x = XMIN;
-	}
-	if (y >= YMAX) {
-		LCD.SetFontColor(RANDOMCOLOR);
-		dy *= -1;
-		y = YMAX;
-	} else if (y <= YMIN) {
-		LCD.SetFontColor(RANDOMCOLOR);
-		dy *= -1;
-		y = YMIN;
-	}
-        // Never end
-    }
-    return 0;
+	return 0;
 }
