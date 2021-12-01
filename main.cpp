@@ -62,6 +62,7 @@ public:
 
 class Bird : public GameObject {
 	float y, v = 0;
+	int dead = 0;
 public:
 	Bird(float y) : y(y) {}
 
@@ -71,6 +72,7 @@ public:
 		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
 			y = SCREENHEIGHT-BIRDHEIGHT-1;
 			v = 0;
+			dead = 1;
 		} else if (y < 0) {
 			y = 0;
 			v = 0;
@@ -78,7 +80,7 @@ public:
 	}
 
 	int is_dead() const {
-		return 0;
+		return dead;
 	}
 
 	void flap() {
@@ -91,14 +93,13 @@ public:
 		LCD.FillCircle(160, y + 10, 10);
 	}
 
-	bool checkCollision(Pipe mypipe) {
+	void feedCollision(Pipe mypipe) {
 		if (
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
 			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + PIPEGAPSIZE)
 		) {
-			return true;
+			dead = 1;
 		}
-		return false;
 	}
 };
 
@@ -154,17 +155,14 @@ int main() {
 	Bird bird(0);
 	DVD dvd;
 
-	bool alive = true;
 	int waitingforup = 0;
 
-	while (alive) {
+	while (!bird.is_dead()) {
 		LCD.Clear();
 		dvd.render();
 		pipe.render();
 		bird.render();
-		if (bird.checkCollision(pipe)) {
-			alive = false;
-		}
+		bird.feedCollision(pipe);
 		LCD.Update();
 		if (LCD.Touch(&touchx, &touchy)) {
 			if (!waitingforup) {
