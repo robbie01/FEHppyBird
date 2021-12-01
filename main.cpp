@@ -29,11 +29,11 @@ class GameObject {
 public:
 	virtual void update() = 0;
 	virtual void render() const = 0;
-	virtual int is_dead() const = 0;
+	virtual bool is_dead() const = 0;
 };
 
 class Pipe : public GameObject {
-	int dead = 0;
+	bool dead = false;
 public:
 	int gapheight, x;
 
@@ -43,11 +43,11 @@ public:
 		if (!dead) {
 			x += PIPEVELOCITY;
 			if (x <= 0)
-				dead = 1;
+				dead = true;
 		}
 	}
 
-	int is_dead() const {
+	bool is_dead() const {
 		return dead;
 	}
 
@@ -62,7 +62,7 @@ public:
 
 class Bird : public GameObject {
 	float y, v = 0;
-	int dead = 0;
+	bool dead = false;
 public:
 	Bird(float y) : y(y) {}
 
@@ -72,14 +72,14 @@ public:
 		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
 			y = SCREENHEIGHT-BIRDHEIGHT-1;
 			v = 0;
-			dead = 1;
+			dead = true;
 		} else if (y < 0) {
 			y = 0;
 			v = 0;
 		}
 	}
 
-	int is_dead() const {
+	bool is_dead() const {
 		return dead;
 	}
 
@@ -98,7 +98,7 @@ public:
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
 			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + PIPEGAPSIZE)
 		) {
-			dead = 1;
+			dead = true;
 		}
 	}
 };
@@ -131,8 +131,8 @@ public:
 		}
 	}
 
-	int is_dead() const {
-		return 0;
+	bool is_dead() const {
+		return false;
 	}
 
 	void render() const {
