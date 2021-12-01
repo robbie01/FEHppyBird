@@ -104,6 +104,19 @@ public:
 	}
 };
 
+void display_image(const char *filename) {
+	unsigned int color;
+	FEHFile *imgfile = SD.FOpen(filename, "r");
+	for (int y = 0; y < 240; ++y) {
+		for (int x = 0; x < 320; ++x) {
+			SD.FScanf(imgfile, "%u", &color);
+			LCD.SetFontColor(color);
+			LCD.DrawPixel(x, y);
+		}
+	}
+	SD.FClose(imgfile);
+}
+
 /*
  * Entry point to the application
  */
@@ -140,16 +153,7 @@ int main() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	unsigned int color;
-	FEHFile *bobfile = SD.FOpen("bob.txt", "r");
-	for (int y = 0; y < 240; ++y) {
-		for (int x = 0; x < 320; ++x) {
-			SD.FScanf(bobfile, "%u", &color);
-			LCD.SetFontColor(color);
-			LCD.DrawPixel(x, y);
-		}
-	}
-	SD.FClose(bobfile);
+	display_image("bob.txt");
 
 	LCD.SetFontColor(0xFF0000);
 	LCD.Write("You died!");
