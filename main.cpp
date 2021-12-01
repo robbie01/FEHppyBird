@@ -98,8 +98,8 @@ public:
 		// mypipe.gapheight + GAPSIZE is top edge of pipe
 		if (
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
-			// Check lower, then upper collision
-			(y + BIRDHEIGHT > SCREENHEIGHT - mypipe.gapheight || y < SCREENHEIGHT - GAPSIZE - mypipe.gapheight)
+			// Check upper, then lower collision
+			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + GAPSIZE)
 		) {
 			return true;
 		}
