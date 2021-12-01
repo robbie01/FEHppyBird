@@ -4,9 +4,9 @@ GITBINARY = git
 FIRMWAREREPO = simulator_libraries
 FEHURL = code.osu.edu
 
-CPPFLAGS = -MMD -MP -Os -DOBJC_OLD_DISPATCH_PROTOTYPES -g
+CPPFLAGS = -std=c++11 -MMD -MP -Os -DOBJC_OLD_DISPATCH_PROTOTYPES -g
 
-WARNINGS = -Wall
+WARNINGS = -Wall -Wextra -pedantic
 
 LIB_DIR = simulator_libraries
 
