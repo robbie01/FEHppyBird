@@ -155,7 +155,7 @@ int main() {
 
 	float touchx, touchy;
 
-	Pipe pipe(2, SCREENWIDTH - PIPEWIDTH);
+	Pipe pipe(Random.RandInt() % (SCREENHEIGHT - PIPEGAPSIZE), SCREENWIDTH - PIPEWIDTH);
 	Bird bird(0);
 	DVD dvd;
 
