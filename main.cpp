@@ -33,8 +33,8 @@ public:
 	}
 
 	void render() {
-		LCD.FillRectangle(x, 0, PIPEWIDTH, SCREENHEIGHT-gapheight-GAPSIZE/2);
-		LCD.FillRectangle(x, SCREENHEIGHT-gapheight+GAPSIZE/2, PIPEWIDTH, gapheight-GAPSIZE/2);
+		LCD.FillRectangle(x, 0, PIPEWIDTH, SCREENHEIGHT-gapheight);
+		LCD.FillRectangle(x, SCREENHEIGHT-gapheight+GAPSIZE, PIPEWIDTH, gapheight-GAPSIZE);
 	}
 };
 
@@ -46,8 +46,8 @@ public:
 	void update() {
 		v += GRAVITY;
 		y += v;
-		if (y > SCREENHEIGHT-20) {
-			y = SCREENHEIGHT-20;
+		if (y > SCREENHEIGHT-21) {
+			y = SCREENHEIGHT-21;
 			v = 0;
 		} else if (y < 0) {
 			y = 0;
@@ -60,7 +60,8 @@ public:
 	}
 
 	void render() {
-		LCD.FillRectangle(150, (int)y, 20, 20);
+		//LCD.FillRectangle(150, (int)y, 20, 20);
+		LCD.FillCircle(160, y+10, 10);
 	}
 };
 
@@ -76,7 +77,7 @@ int main() {
 
     float touchx, touchy;
 
-    Pipe pipe(80, SCREENWIDTH);
+    Pipe pipe(61, SCREENWIDTH-PIPEWIDTH);
     Bird bird(0);
 
     int waitingforup = 0;
