@@ -40,8 +40,7 @@ ifeq ($(OS),Windows_NT)
 	( \
 		( \
 			cd $(LIB_DIR) && \
-			$(GITBINARY) stash && \
-			$(GITBINARY) pull && \
+			$(GITBINARY) submodule update --recursive --init && \
 			cd .. \
 		) \
 	) 
@@ -52,8 +51,7 @@ else
 		echo "Warning: No internet connection!"; \
 	else \
 		cd $(LIB_DIR) ; \
-		$(GITBINARY) stash ; \
-		$(GITBINARY) pull ; \
+		$(GITBINARY) submodule update --recursive --init ; \
 		cd .. ; \
 	fi \
 
