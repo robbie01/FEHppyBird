@@ -11,7 +11,7 @@ To get libraries submodule:
 
 ### Prerequisites
 
-#### Windows macOS
+#### Windows & macOS
 
 Cross your fingers
 
