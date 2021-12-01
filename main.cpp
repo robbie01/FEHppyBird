@@ -9,7 +9,7 @@ constexpr int DVDYMAX = 226;
 constexpr int DVDDXI = 1;
 constexpr int DVDDYI = 1;
 
-constexpr int GAPSIZE = 60;
+constexpr int PIPEGAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
 
@@ -20,8 +20,8 @@ constexpr int BIRDXPOS = 150;
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
-constexpr float GRAVITY = 0.2;
-constexpr float FLAPVELOCITY = -3;
+constexpr float BIRDGRAVITY = 0.2;
+constexpr float BIRDFLAPVELOCITY = -3;
 
 #define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
 
@@ -55,7 +55,7 @@ public:
 		if (!dead) {
 			LCD.SetFontColor(0x00AA00);
 			LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
-			LCD.FillRectangle(x, gapheight + GAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - GAPSIZE);
+			LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 		}
 	}
 };
@@ -66,7 +66,7 @@ public:
 	Bird(float y) : y(y) {}
 
 	void update() {
-		v += GRAVITY;
+		v += BIRDGRAVITY;
 		y += v;
 		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
 			y = SCREENHEIGHT-BIRDHEIGHT-1;
@@ -82,7 +82,7 @@ public:
 	}
 
 	void flap() {
-		v = FLAPVELOCITY;
+		v = BIRDFLAPVELOCITY;
 	}
 
 	void render() const {
@@ -99,7 +99,7 @@ public:
 		if (
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
 			// Check upper, then lower collision
-			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + GAPSIZE)
+			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + PIPEGAPSIZE)
 		) {
 			return true;
 		}
