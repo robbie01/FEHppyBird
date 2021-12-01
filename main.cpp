@@ -149,6 +149,7 @@ int main() {
 			LCD.DrawPixel(x, y);
 		}
 	}
+	SD.FClose(bobfile);
 
 	LCD.SetFontColor(0xFF0000);
 	LCD.Write("You died!");
