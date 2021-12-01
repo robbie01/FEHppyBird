@@ -1,0 +1,3 @@
+[submodule "simulator_libraries"]
+	path = simulator_libraries
+	url = https://code.osu.edu/fehelectronics/proteus_software/simulator_libraries.git
