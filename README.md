@@ -23,6 +23,10 @@ Cross your fingers
 
 Idk i dont use it
 
+#### Void
+
+    # xbps-install libglvnd-devel glu-devel
+
 ### On Windows
 
     mingw32-make.exe
