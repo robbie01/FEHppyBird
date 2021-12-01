@@ -10,6 +10,10 @@ constexpr int YMAX = 226;
 constexpr int GAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
 
+constexpr int BIRDHEIGHT = 20;
+constexpr int BIRDWIDTH = 20;
+constexpr int BIRDXPOS = 150;
+
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
@@ -24,8 +28,9 @@ public:
 };
 
 class Pipe : public Renderable {
-	int gapheight, x;
 public:
+	int gapheight, x;
+
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {}
 
 	void mod_x(int dx) {
@@ -33,7 +38,9 @@ public:
 	}
 
 	void render() {
+		// Top pipe
 		LCD.FillRectangle(x, 0, PIPEWIDTH, SCREENHEIGHT-gapheight-GAPSIZE/2);
+		// Bottom pipe
 		LCD.FillRectangle(x, SCREENHEIGHT-gapheight+GAPSIZE/2, PIPEWIDTH, gapheight-GAPSIZE/2);
 	}
 };
@@ -46,8 +53,8 @@ public:
 	void update() {
 		v += GRAVITY;
 		y += v;
-		if (y > SCREENHEIGHT-20) {
-			y = SCREENHEIGHT-20;
+		if (y > SCREENHEIGHT-BIRDHEIGHT) {
+			y = SCREENHEIGHT-BIRDHEIGHT;
 			v = 0;
 		} else if (y < 0) {
 			y = 0;
@@ -60,7 +67,22 @@ public:
 	}
 
 	void render() {
-		LCD.FillRectangle(150, (int)y, 20, 20);
+		LCD.FillRectangle(BIRDXPOS, (int)y, 20, 20);
+	}
+
+	bool checkCollision(Pipe mypipe) {
+		// Gapheight changes to top after robbies update
+		// mypipe.x is left side of pipe
+		// mypipe.gapheight is bottom edge of pipe
+		// mypipe.gapheight + GAPSIZE is top edge of pipe
+		if (
+			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) && 
+			// Check lower, then upper collision
+			(y + BIRDHEIGHT > SCREENHEIGHT - mypipe.gapheight || y < SCREENHEIGHT - GAPSIZE - mypipe.gapheight)
+		) {
+			return true;
+		}
+		return false;
 	}
 };
 
@@ -75,16 +97,21 @@ int main() {
     int x = XMIN, y = YMIN, dx = 1, dy = 1;
 
     float touchx, touchy;
+    bool alive = true; 
 
     Pipe pipe(80, SCREENWIDTH);
     Bird bird(0);
 
     int waitingforup = 0;
 
-    while (1) {
+    while (alive) {
 	LCD.Clear();
 	pipe.render();
 	bird.render();
+	// Check collision
+	if (bird.checkCollision(pipe)) {
+		alive = false;
+	}
         LCD.WriteAt("DVD", x, y);
         LCD.Update();
 	if (LCD.Touch(&touchx, &touchy)) {
