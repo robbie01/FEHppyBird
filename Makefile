@@ -19,7 +19,11 @@ ifeq ($(OS),Windows_NT)
 	EXEC = game.exe
 	SHELL := CMD
 else
-	LDFLAGS = -framework OpenGL -framework Cocoa
+	ifeq ($(shell uname), Linux)
+		LDFLAGS = -lGLU -lGL -lX11
+	else
+		LDFLAGS = -framework OpenGL -framework Cocoa
+	endif
 	EXEC = game.out
 endif
 
