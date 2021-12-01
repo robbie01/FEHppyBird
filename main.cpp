@@ -180,5 +180,11 @@ int main() {
 		//Sleep(20);
 		// Never end
 	}
+
+	LCD.Clear();
+	LCD.SetFontColor(0xFF0000);
+	LCD.Write("You died!");
+
+	while (1) LCD.Update();
 	return 0;
 }
