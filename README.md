@@ -17,7 +17,7 @@ Cross your fingers
 
 #### Fedora
 
-    # dnf install mesa-libGLU-devel mesa-libGL-devel libX11-devel
+    # dnf install mesa-libGLU-devel
 
 #### Ubuntu
 
@@ -25,7 +25,7 @@ Idk i dont use it
 
 #### Void
 
-    # xbps-install libglvnd-devel glu-devel
+    # xbps-install glu-devel
 
 ### On Windows
 
