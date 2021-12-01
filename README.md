@@ -4,27 +4,30 @@
 
 ### Installation
 To get libraries submodule:
-`git submodule update --recursive --init`
 
-## Building
+    git submodule update --recursive --init
 
-### Prerequisites
+Note: this is done automatically by the Makefile
 
-#### Windows & macOS
+## Prerequisites
+
+### Windows & macOS
 
 Cross your fingers
 
-#### Fedora
+### Fedora
 
     # dnf install mesa-libGLU-devel
 
-#### Ubuntu
+### Ubuntu
 
 Idk i dont use it
 
-#### Void
+### Void
 
     # xbps-install glu-devel
+
+## Building
 
 ### On Windows
 
@@ -32,7 +35,7 @@ Idk i dont use it
 
 ### On macOS
 
-    It's probably just `make`
+It's probably just `make`
 
 ### On Linux
 
