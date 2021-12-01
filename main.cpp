@@ -1,6 +1,7 @@
 #include "FEHLCD.h"
 #include "FEHRandom.h"
 #include "FEHUtility.h"
+#include "FEHSD.h"
 
 constexpr int DVDXMIN = -2;
 constexpr int DVDXMAX = 284;
@@ -138,6 +139,17 @@ int main() {
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
+
+	unsigned int color;
+	FEHFile *bobfile = SD.FOpen("bob.txt", "r");
+	for (int y = 0; y < 240; ++y) {
+		for (int x = 0; x < 320; ++x) {
+			SD.FScanf(bobfile, "%u", &color);
+			LCD.SetFontColor(color);
+			LCD.DrawPixel(x, y);
+		}
+	}
+
 	LCD.SetFontColor(0xFF0000);
 	LCD.Write("You died!");
 
