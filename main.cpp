@@ -17,16 +17,16 @@ int main() {
         LCD.Update();
         //Sleep(20);
 	x += dx, y += dy;
-	if (x >= 285) {
+	if (x >= 284) {
 		dx *= -1;
-		x = 285;
+		x = 284;
 	} else if (x <= -1) {
 		dx *= -1;
 		x = -1;
 	}
-	if (y >= 227) {
+	if (y >= 226) {
 		dy *= -1;
-		y = 227;
+		y = 226;
 	} else if (y <= 0) {
 		dy *= -1;
 		y = 0;
