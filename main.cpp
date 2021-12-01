@@ -103,63 +103,21 @@ public:
 	}
 };
 
-class DVD : public GameObject {
-	int x = DVDXMIN, y = DVDYMIN, dx = DVDDXI, dy = DVDDYI;
-	unsigned int color;
-public:
-	DVD() : color(RANDOMCOLOR) {}
-
-	void update() {
-		x += dx, y += dy;
-		if (x >= DVDXMAX) {
-			color = RANDOMCOLOR;
-			dx *= -1;
-			x = DVDXMAX;
-		} else if (x <= DVDXMIN) {
-			color = RANDOMCOLOR;
-			dx *= -1;
-			x = DVDXMIN;
-		}
-		if (y >= DVDYMAX) {
-			color = RANDOMCOLOR;
-			dy *= -1;
-			y = DVDYMAX;
-		} else if (y <= DVDYMIN) {
-			color = RANDOMCOLOR;
-			dy *= -1;
-			y = DVDYMIN;
-		}
-	}
-
-	bool is_dead() const {
-		return false;
-	}
-
-	void render() const {
-		LCD.SetFontColor(color);
-		LCD.WriteAt("DVD", x, y);
-	}
-};
-
 /*
  * Entry point to the application
  */
 int main() {
-	// Clear background
 	LCD.SetBackgroundColor(BLACK);
-	LCD.Clear();
 
 	float touchx, touchy;
 
 	Pipe pipe(Random.RandInt() % (SCREENHEIGHT - PIPEGAPSIZE), SCREENWIDTH - PIPEWIDTH);
 	Bird bird(0);
-	DVD dvd;
 
 	int waitingforup = 0;
 
 	while (!bird.is_dead()) {
 		LCD.Clear();
-		dvd.render();
 		pipe.render();
 		bird.render();
 		bird.feedCollision(pipe);
@@ -172,13 +130,13 @@ int main() {
 		} else {
 			waitingforup = 0;
 		}
-		dvd.update();
 		bird.update();
 		pipe.update();
 		//Sleep(20);
 		// Never end
 	}
 
+	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(0xFF0000);
 	LCD.Write("You died!");
