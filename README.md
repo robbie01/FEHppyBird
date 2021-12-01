@@ -1,7 +1,6 @@
-# hello world
-## may i take your order
+# Software Design Project ENGR 1281.02H 2021
 
-flappo bird
+[Flowchart](https://www.figma.com/file/E5ZmUvbhixMxcTwcUR0In5/SDP-21-Flowchart?node-id=0%3A1)
 
 ### Installation
 To get libraries submodule:
