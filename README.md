@@ -27,6 +27,10 @@ Idk i dont use it
 
     mingw32-make.exe
 
+### On macOS
+
+    It's probably just `make`
+
 ### On Linux
 
     make -f Makefile.linux
