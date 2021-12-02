@@ -225,7 +225,8 @@ enum NextState {
 	PLAY_GAME,
 	STATS,
 	CREDITS,
-	MANUAL
+	MANUAL,
+	QUIT
 };
 enum NextState credits() {
 
@@ -325,50 +326,22 @@ enum NextState main_menu() {
 			selected = true;
 			printf("start");
 			next_state = PLAY_GAME;
-		}
-
-		else if (touchx >= 197 && touchx <= 263 && touchy >= 123 && touchy <= 161) {
+		} else if (touchx >= 197 && touchx <= 263 && touchy >= 123 && touchy <= 161) {
 			printf("Stats");
 			selected = true;
 			next_state = STATS;
-		}
-
-		else if (touchx >= 187 && touchx <= 276 && touchy >= 187 && touchy <= 225) {
+		} else if (touchx >= 187 && touchx <= 276 && touchy >= 187 && touchy <= 225) {
 			printf("Credits");
 			selected = true;
 			next_state = CREDITS;
 
-		}
-
-		else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
+		} else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
 			printf("manual");
 			selected = true;
 			next_state = MANUAL;
 		}
 	}
 	return next_state;
-	/*
-	LCD.SetFontColor(0xFF0000);
-	LCD.WriteAt("You died!", 1, 1);
-
-	LCD.SetFontColor(0xFFFFFF);
-	LCD.WriteAt("Restart", 14, 37);
-	LCD.WriteAt("Return to menu", 14, 60);
-
-	bool selected = false;
-	enum NextState next_state;
-
-	while (!selected) {
-		while (!LCD.Touch(&touchx, &touchy));
-		if (touchx >= 12 && touchx < 12+90 && touchy >= 33 && touchy < 33+22) {
-			selected = true;
-			next_state = PLAY_GAME;
-		} else if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
-			selected = true;
-			next_state = MAIN_MENU;
-		}
-		
-	*/
 }
 enum NextState manual() {
 	float touchx, touchy;
@@ -514,7 +487,8 @@ enum NextState play_game() {
  */
 int main() {
 	enum NextState next_state = MAIN_MENU;
-	while (true) {
+	bool quit = false;
+	while (!quit) {
 		switch (next_state) {
 		case MAIN_MENU:
 			next_state = main_menu();
@@ -530,6 +504,9 @@ int main() {
 			break;
 		case CREDITS:
 			next_state = credits();
+			break;
+		case QUIT:
+			quit = true;
 			break;
 		}
 	}
