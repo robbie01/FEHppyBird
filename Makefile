@@ -1,8 +1,4 @@
-CC = g++
-LD = $(CC)
 GITBINARY = git
-FIRMWAREREPO = simulator_libraries
-FEHURL = code.osu.edu
 
 CPPFLAGS = -MMD -MP -Os -DOBJC_OLD_DISPATCH_PROTOTYPES -g
 
