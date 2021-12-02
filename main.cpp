@@ -138,7 +138,6 @@ public:
 			(y < pipe.gapheight || y + BIRDHEIGHT > pipe.gapheight + PIPEGAPSIZE) &&
 			// If front of bird is in front of the front of pipe and back of bird is behind the front of the pipe
 			(BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)
-			
 		) {
 			dead = true;
 		} else if (!pipe.processed && pipe.x + PIPEWIDTH < BIRDXPOS) {
