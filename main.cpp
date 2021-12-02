@@ -1,7 +1,7 @@
 #include "FEHLCD.h"
 #include "FEHRandom.h"
-#include "FEHUtility.h"
 #include "FEHSD.h"
+#include "FEHUtility.h"
 
 #include <vector>
 
@@ -26,11 +26,11 @@ constexpr int SCOREYPOS = 30;
 constexpr float BIRDGRAVITY = 0.2;
 constexpr float BIRDFLAPVELOCITY = -3;
 constexpr float BIRDYMIN = 0;
-constexpr float BIRDYMAX = SCREENHEIGHT-BIRDHEIGHT-1;
+constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
 constexpr int BACKDROPVELOCITY = -1;
 
-using Image = unsigned int[SCREENWIDTH*SCREENHEIGHT];
+using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
 #define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
 
@@ -44,12 +44,12 @@ public:
 	GameObject() {}
 
 	// Delete copy constructor and assignment operators
-	GameObject(const GameObject&) = delete;
-	GameObject& operator=(const GameObject&) = delete;
+	GameObject(const GameObject &) = delete;
+	GameObject &operator=(const GameObject &) = delete;
 
 	// Undelete move constructor and assignment operator
-	GameObject(GameObject&&) = default;
-	GameObject& operator=(GameObject&&) = default;
+	GameObject(GameObject &&) = default;
+	GameObject &operator=(GameObject &&) = default;
 
 	virtual void update() = 0;
 	virtual void render() const = 0;
@@ -70,8 +70,8 @@ public:
 	bool is_dead() const { return false; }
 	void render() const {
 		LCD.SetFontColor(BLACK);
-		LCD.WriteAt(score, SCOREXPOS+1, SCOREYPOS+1);
-		LCD.WriteAt(score, SCOREXPOS+2, SCOREYPOS+2);
+		LCD.WriteAt(score, SCOREXPOS + 1, SCOREYPOS + 1);
+		LCD.WriteAt(score, SCOREXPOS + 2, SCOREYPOS + 2);
 		LCD.SetFontColor(WHITE);
 		LCD.WriteAt(score, SCOREXPOS, SCOREYPOS);
 	}
@@ -84,7 +84,8 @@ public:
 	bool processed = false;
 
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {
-		if (x < PIPEXMIN) this->x = PIPEXMIN;
+		if (x < PIPEXMIN)
+			this->x = PIPEXMIN;
 		//else if (x > PIPEXMAX) this->x = PIPEXMAX;
 	}
 
@@ -115,14 +116,13 @@ public:
 			} else if (x < SCREENWIDTH) {
 				LCD.SetFontColor(0x00AA00);
 				// Draw top pipe
-				LCD.FillRectangle(x, 0, SCREENWIDTH-x, gapheight);
+				LCD.FillRectangle(x, 0, SCREENWIDTH - x, gapheight);
 				// Draw bottom pipe
-				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH - x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 				// Draw border
 				LCD.SetFontColor(0);
-				LCD.DrawRectangle(x, 0, SCREENWIDTH-x, gapheight);
-				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
-
+				LCD.DrawRectangle(x, 0, SCREENWIDTH - x, gapheight);
+				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH - x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 			}
 		}
 	}
@@ -159,19 +159,18 @@ public:
 	void render() const {
 		LCD.SetFontColor(0xFFFF00);
 		//LCD.FillRectangle(150, (int)y, 20, 20);
-		LCD.FillCircle(BIRDXPOS+10, y + 10, 10);
+		LCD.FillCircle(BIRDXPOS + 10, y + 10, 10);
 		LCD.SetFontColor(0);
-		LCD.DrawCircle(BIRDXPOS+10, y + 10, 10);
+		LCD.DrawCircle(BIRDXPOS + 10, y + 10, 10);
 	}
 
 	void feedCollision(Pipe &pipe) {
 		if (
-			(y < pipe.gapheight || y + BIRDHEIGHT > pipe.gapheight + PIPEGAPSIZE) &&
-			// If front of bird is in front of the front of pipe and back of bird is behind the front of the pipe
-			(BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)
-		) {
+		    (y < pipe.gapheight || y + BIRDHEIGHT > pipe.gapheight + PIPEGAPSIZE) &&
+		    // If front of bird is in front of the front of pipe and back of bird is behind the front of the pipe
+		    (BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)) {
 			dead = true;
-		} else if (!pipe.processed && pipe.x + PIPEWIDTH/2 < BIRDXPOS + BIRDWIDTH/2) {
+		} else if (!pipe.processed && pipe.x + PIPEWIDTH / 2 < BIRDXPOS + BIRDWIDTH / 2) {
 			pipe.processed = true;
 			score.increment();
 		}
@@ -180,15 +179,16 @@ public:
 
 void read_image(const char *filename, Image img) {
 	FEHFile *imgfile = SD.FOpen(filename, "r");
-	for (int i = 0; i < SCREENWIDTH*SCREENHEIGHT; ++i) SD.FScanf(imgfile, "%u", img+i);
+	for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT; ++i)
+		SD.FScanf(imgfile, "%u", img + i);
 	SD.FClose(imgfile);
 }
 
 void display_image(const Image img, int x0, int y0) {
 	for (int y = 0; y < 240; ++y) {
 		for (int x = 0; x < 320; ++x) {
-			LCD.SetFontColor(img[y*SCREENWIDTH+x]);
-			LCD.DrawPixel(x+x0, y+y0);
+			LCD.SetFontColor(img[y * SCREENWIDTH + x]);
+			LCD.DrawPixel(x + x0, y + y0);
 		}
 	}
 }
@@ -223,14 +223,13 @@ public:
 enum NextState {
 	MAIN_MENU,
 	PLAY_GAME,
-	STATS, 
+	STATS,
 	CREDITS,
 	MANUAL
 };
-enum NextState credits()
-{
-	
-		float touchx, touchy;
+enum NextState credits() {
+
+	float touchx, touchy;
 
 	LCD.SetBackgroundColor(STEELBLUE);
 	LCD.Clear();
@@ -247,17 +246,16 @@ enum NextState credits()
 	enum NextState next_state;
 
 	while (!selected) {
-		while (!LCD.Touch(&touchx, &touchy));
-		if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
+		while (!LCD.Touch(&touchx, &touchy))
+			;
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
 	}
 
 	return next_state;
-
 }
-
 
 enum NextState main_menu() {
 	// TODO: add actual menu
@@ -267,7 +265,7 @@ enum NextState main_menu() {
 	LCD.FillCircle(25, 150, 25);
 	LCD.FillCircle(45, 130, 15);
 	LCD.FillCircle(75, 120, 25);
-	LCD.FillCircle(100, 150, 40);	
+	LCD.FillCircle(100, 150, 40);
 	LCD.FillCircle(150, 130, 25);
 	LCD.FillCircle(190, 125, 30);
 	LCD.FillCircle(230, 120, 40);
@@ -275,38 +273,37 @@ enum NextState main_menu() {
 	LCD.FillCircle(300, 130, 30);
 	LCD.FillRectangle(0, 130, 320, 110);
 
-
 	LCD.SetFontColor(BLACK);
 	LCD.WriteAt("Flappy Bird", 91, 41);
 	LCD.WriteAt("Flappy Bird", 89, 39);
 	LCD.SetFontColor(WHITE);
-	LCD.WriteAt("Flappy Bird", 90,40);
+	LCD.WriteAt("Flappy Bird", 90, 40);
 
 	LCD.SetFontColor(ORANGERED);
 	LCD.FillRectangle(38, 125, 62, 35);
 	LCD.SetFontColor(WHITE);
-	LCD.DrawRectangle(37,124, 63, 36);
+	LCD.DrawRectangle(37, 124, 63, 36);
 	LCD.SetFontColor(BLACK);
 	LCD.DrawRectangle(36, 123, 65, 38);
 
 	LCD.SetFontColor(ORANGERED);
 	LCD.FillRectangle(200, 125, 62, 35);
 	LCD.SetFontColor(WHITE);
-	LCD.DrawRectangle(199,124, 63, 36);
+	LCD.DrawRectangle(199, 124, 63, 36);
 	LCD.SetFontColor(BLACK);
 	LCD.DrawRectangle(198, 123, 65, 38);
 
 	LCD.SetFontColor(ORANGERED);
 	LCD.FillRectangle(190, 190, 86, 35);
 	LCD.SetFontColor(WHITE);
-	LCD.DrawRectangle(189,189, 87, 36);
+	LCD.DrawRectangle(189, 189, 87, 36);
 	LCD.SetFontColor(BLACK);
 	LCD.DrawRectangle(188, 188, 89, 38);
 
 	LCD.SetFontColor(ORANGERED);
 	LCD.FillRectangle(28, 190, 86, 35);
 	LCD.SetFontColor(WHITE);
-	LCD.DrawRectangle(27,189, 87, 36);
+	LCD.DrawRectangle(27, 189, 87, 36);
 	LCD.SetFontColor(BLACK);
 	LCD.DrawRectangle(26, 188, 89, 38);
 
@@ -320,38 +317,34 @@ enum NextState main_menu() {
 	bool selected = false;
 	enum NextState next_state;
 
-	while(!selected)
-	{
-		while(!LCD.Touch(&touchx, &touchy));
+	while (!selected) {
+		while (!LCD.Touch(&touchx, &touchy))
+			;
 
-			if(touchx>=35 && touchx<=101 && touchy>=123 && touchy<=161)
-			{
-				selected=true;
-				printf("start");
-				next_state =PLAY_GAME;
-			}
+		if (touchx >= 35 && touchx <= 101 && touchy >= 123 && touchy <= 161) {
+			selected = true;
+			printf("start");
+			next_state = PLAY_GAME;
+		}
 
-			else if(touchx>=197 && touchx<=263 && touchy>=123 && touchy<=161)
-			{
-				printf("Stats");
-				selected=true;
-				next_state =STATS;
-			}
+		else if (touchx >= 197 && touchx <= 263 && touchy >= 123 && touchy <= 161) {
+			printf("Stats");
+			selected = true;
+			next_state = STATS;
+		}
 
-			else if(touchx>=187 && touchx<=276 && touchy>=187 && touchy<=225)
-			{
-				printf("Credits");
-				selected=true;
-				next_state=CREDITS;
-				
-			}
+		else if (touchx >= 187 && touchx <= 276 && touchy >= 187 && touchy <= 225) {
+			printf("Credits");
+			selected = true;
+			next_state = CREDITS;
 
-			else if(touchx>=25 && touchx<=115 && touchy>=187 && touchy<=226)
-			{
-				printf("manual");
-				selected=true;
-				next_state=MANUAL;
-			}
+		}
+
+		else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
+			printf("manual");
+			selected = true;
+			next_state = MANUAL;
+		}
 	}
 	return next_state;
 	/*
@@ -377,16 +370,15 @@ enum NextState main_menu() {
 		
 	*/
 }
-enum NextState manual()
-{
-		float touchx, touchy;
+enum NextState manual() {
+	float touchx, touchy;
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(RED);
 
 	LCD.WriteAt("Manual", 50, 200);
-	
+
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Return to menu", 14, 60);
 	LCD.Update();
@@ -394,25 +386,23 @@ enum NextState manual()
 	enum NextState next_state;
 
 	while (!selected) {
-		while (!LCD.Touch(&touchx, &touchy));
-		if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
+		while (!LCD.Touch(&touchx, &touchy))
+			;
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
 	}
 
 	return next_state;
-
 }
-enum NextState stats()
-{
-		float touchx, touchy;
-
+enum NextState stats() {
+	float touchx, touchy;
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(RED);
-	LCD.WriteAt("STATS", 50, 200);	
+	LCD.WriteAt("STATS", 50, 200);
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Return to menu", 14, 60);
 	LCD.Update();
@@ -420,17 +410,15 @@ enum NextState stats()
 	enum NextState next_state;
 
 	while (!selected) {
-		while (!LCD.Touch(&touchx, &touchy));
-		if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
+		while (!LCD.Touch(&touchx, &touchy))
+			;
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
 	}
 
 	return next_state;
-
-
-
 }
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
@@ -441,8 +429,8 @@ enum NextState play_game() {
 	Backdrop backdrop;
 
 	std::vector<Pipe> pipes;
-	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
-	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH/2);
+	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX);
+	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX + SCREENWIDTH / 2);
 	//pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH);
 
 	//Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
@@ -453,7 +441,8 @@ enum NextState play_game() {
 	while (!bird.is_dead()) {
 		LCD.Clear();
 		backdrop.render();
-		for (Pipe &pipe : pipes) pipe.render();
+		for (Pipe &pipe : pipes)
+			pipe.render();
 		bird.render();
 		score.render();
 		LCD.Update();
@@ -474,7 +463,7 @@ enum NextState play_game() {
 		for (auto it = pipes.begin(); it != pipes.end(); ++it) {
 			if (it->is_dead()) {
 				pipes.erase(it);
-				pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+PIPEWIDTH);
+				pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX + PIPEWIDTH);
 				break;
 			}
 		}
@@ -506,11 +495,12 @@ enum NextState play_game() {
 	enum NextState next_state;
 
 	while (!selected) {
-		while (!LCD.Touch(&touchx, &touchy));
-		if (touchx >= 12 && touchx < 12+90 && touchy >= 33 && touchy < 33+22) {
+		while (!LCD.Touch(&touchx, &touchy))
+			;
+		if (touchx >= 12 && touchx < 12 + 90 && touchy >= 33 && touchy < 33 + 22) {
 			selected = true;
 			next_state = PLAY_GAME;
-		} else if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
+		} else if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
