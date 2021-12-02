@@ -95,13 +95,23 @@ public:
 	}
 
 	void render() const {
-		if (!dead && x <= PIPEXMAX) {
-			LCD.SetFontColor(0x00AA00);
-			LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
-			LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
-			LCD.SetFontColor(0);
-			LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
-			LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+		if (!dead) {
+			if (x <= PIPEXMAX) {
+				LCD.SetFontColor(0x00AA00);
+				LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
+				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				LCD.SetFontColor(0);
+				LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
+				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+			} else if (x < SCREENWIDTH) {
+				LCD.SetFontColor(0x00AA00);
+				LCD.FillRectangle(x, 0, SCREENWIDTH-x, gapheight);
+				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				LCD.SetFontColor(0);
+				LCD.DrawRectangle(x, 0, SCREENWIDTH-x, gapheight);
+				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+
+			}
 		}
 	}
 };
