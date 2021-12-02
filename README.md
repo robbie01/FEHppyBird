@@ -39,9 +39,9 @@ Idk i dont use it
 
 ### Linux and MacOS
 
-`make`
+    make
 
 ### Windows
 
-    mingw32-make.exe
+    mingw32-make
 
