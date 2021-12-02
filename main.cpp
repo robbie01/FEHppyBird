@@ -491,9 +491,14 @@ enum NextState play_game() {
 }
 
 void do_quit() {
-	LCD.SetBackgroundColor(RED);
 	LCD.Clear();
+	display_image("unsure.txt", 0, 0);
 	LCD.SetFontColor(BLACK);
+	LCD.WriteAt("There is no escape.", 45, 111);
+	LCD.WriteAt("There is no escape.", 47, 113);
+	LCD.WriteAt("There is no escape.", 45, 113);
+	LCD.WriteAt("There is no escape.", 47, 111);
+	LCD.SetFontColor(RED);
 	LCD.WriteAt("There is no escape.", 46, 112);
 
 	while (1) LCD.Update();
