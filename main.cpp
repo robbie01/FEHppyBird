@@ -3,22 +3,33 @@
 #include "FEHUtility.h"
 #include "FEHSD.h"
 
+constexpr int SCREENHEIGHT = 240;
+constexpr int SCREENWIDTH = 320;
+
 constexpr int PIPEGAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
+constexpr int PIPEXMIN = 0;
+constexpr int PIPEXMAX = SCREENWIDTH - PIPEWIDTH;
+constexpr int PIPEGAPMIN = 0;
+constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
 constexpr int BIRDXPOS = 150;
 
-constexpr int SCREENHEIGHT = 240;
-constexpr int SCREENWIDTH = 320;
-
 constexpr float BIRDGRAVITY = 0.2;
 constexpr float BIRDFLAPVELOCITY = -3;
+constexpr float BIRDYMIN = 0;
+constexpr float BIRDYMAX = SCREENHEIGHT-BIRDHEIGHT-1;
 
 #define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
 
+// Parent class for everything on the screen, interactive or not
+// update() updates internal state based on internal state only
+// render() is for drawing to the LCD
+// is_dead() signals to the "reaper" that the object should be destroyed.
+//     It has additional significance for certain objects.
 class GameObject {
 public:
 	virtual void update() = 0;
@@ -31,7 +42,10 @@ class Pipe : public GameObject {
 public:
 	int gapheight, x;
 
-	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {}
+	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {
+		if (x < PIPEXMIN) this->x = PIPEXMIN;
+		else if (x > PIPEXMAX) this->x = PIPEXMAX;
+	}
 
 	void update() {
 		if (!dead) {
@@ -63,12 +77,12 @@ public:
 	void update() {
 		v += BIRDGRAVITY;
 		y += v;
-		if (y > SCREENHEIGHT-BIRDHEIGHT-1) {
-			y = SCREENHEIGHT-BIRDHEIGHT-1;
+		if (y >= BIRDYMAX) {
+			y = BIRDYMAX;
 			v = 0;
 			dead = true;
-		} else if (y < 0) {
-			y = 0;
+		} else if (y <= BIRDYMIN) {
+			y = BIRDYMIN;
 			v = 0;
 		}
 	}
@@ -120,7 +134,7 @@ int main() {
 
 	float touchx, touchy;
 
-	Pipe pipe(Random.RandInt() % (SCREENHEIGHT - PIPEGAPSIZE), SCREENWIDTH - PIPEWIDTH);
+	Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
 	Bird bird(0);
 
 	int waitingforup = 0;
@@ -140,7 +154,7 @@ int main() {
 			waitingforup = 0;
 		}
 		bird.update();
-		pipe.update();
+		//pipe.update();
 		//Sleep(20);
 		// Never end
 	}
