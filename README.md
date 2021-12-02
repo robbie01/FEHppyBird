@@ -37,11 +37,12 @@ Idk i dont use it
 
 ## Building
 
-### Linux and MacOS
+### On Linux and MacOS
 
     make
 
-### Windows
+### On Windows
+
 
     mingw32-make
 
