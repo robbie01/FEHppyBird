@@ -275,9 +275,11 @@ enum NextState play_game() {
 
 	LCD.SetFontColor(0);
 	LCD.FillRectangle(12, 33, 90, 22);
+	LCD.FillRectangle(12, 56, 174, 22);
 
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.DrawRectangle(12, 33, 90, 22);
+	LCD.DrawRectangle(12, 56, 174, 22);
 
 	LCD.SetFontColor(0xFF0000);
 	LCD.WriteAt("You died!", 1, 1);
@@ -294,6 +296,9 @@ enum NextState play_game() {
 		if (touchx >= 12 && touchx < 12+90 && touchy >= 33 && touchy < 33+22) {
 			selected = true;
 			next_state = PLAY_GAME;
+		} else if (touchx >= 12 && touchx < 12+174 && touchy >= 56 && touchy < 56+22) {
+			selected = true;
+			next_state = MAIN_MENU;
 		}
 	}
 
