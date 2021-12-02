@@ -154,7 +154,7 @@ int main() {
 			waitingforup = 0;
 		}
 		bird.update();
-		//pipe.update();
+		pipe.update();
 		//Sleep(20);
 		// Never end
 	}
