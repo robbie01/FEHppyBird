@@ -69,7 +69,10 @@ public:
 	void update() {}
 	bool is_dead() const { return false; }
 	void render() const {
-		LCD.SetFontColor(0xFFFFFF);
+		LCD.SetFontColor(BLACK);
+		LCD.WriteAt(score, SCOREXPOS+1, SCOREYPOS+1);
+		LCD.WriteAt(score, SCOREXPOS+2, SCOREYPOS+2);
+		LCD.SetFontColor(WHITE);
 		LCD.WriteAt(score, SCOREXPOS, SCOREYPOS);
 	}
 };
