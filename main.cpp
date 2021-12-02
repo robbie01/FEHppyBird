@@ -101,15 +101,21 @@ public:
 		if (!dead) {
 			if (x <= PIPEXMAX) {
 				LCD.SetFontColor(0x00AA00);
+				// Draw top pipe
 				LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
+				// Draw bottom pipe
 				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				// Draw border
 				LCD.SetFontColor(0);
 				LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
 				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 			} else if (x < SCREENWIDTH) {
 				LCD.SetFontColor(0x00AA00);
+				// Draw top pipe
 				LCD.FillRectangle(x, 0, SCREENWIDTH-x, gapheight);
+				// Draw bottom pipe
 				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				// Draw border
 				LCD.SetFontColor(0);
 				LCD.DrawRectangle(x, 0, SCREENWIDTH-x, gapheight);
 				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
