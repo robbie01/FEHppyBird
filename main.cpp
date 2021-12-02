@@ -210,14 +210,136 @@ public:
 
 enum NextState {
 	MAIN_MENU,
-	PLAY_GAME
+	PLAY_GAME,
+	STATS, 
+	CREDITS,
+	MANUAL
 };
+enum NextState credits()
+{
+	
+	
+	LCD.SetBackgroundColor(STEELBLUE);
+	LCD.Clear();
+	LCD.SetFontColor(RED);
+
+	LCD.WriteAt("Sammy Aidja", 50, 60);
+	LCD.WriteAt("Robbie Langer", 50, 80);
+	LCD.WriteAt("Luke Weitler", 50, 100);
+	while(1) LCD.Update();
+}
+
 
 enum NextState main_menu() {
 	// TODO: add actual menu
-	return PLAY_GAME;
-}
 
+	LCD.SetBackgroundColor(STEELBLUE);
+	LCD.Clear();
+	LCD.FillCircle(25, 150, 25);
+	LCD.FillCircle(45, 130, 15);
+	LCD.FillCircle(75, 120, 25);
+	LCD.FillCircle(100, 150, 40);	
+	LCD.FillCircle(150, 130, 25);
+	LCD.FillCircle(190, 125, 30);
+	LCD.FillCircle(230, 120, 40);
+	LCD.FillCircle(275, 120, 25);
+	LCD.FillCircle(300, 130, 30);
+	LCD.FillRectangle(0, 130, 320, 110);
+
+
+	LCD.SetFontColor(BLACK);
+	LCD.WriteAt("Flappy Bird", 91, 41);
+	LCD.WriteAt("Flappy Bird", 89, 39);
+	LCD.SetFontColor(WHITE);
+	LCD.WriteAt("Flappy Bird", 90,40);
+
+	LCD.SetFontColor(ORANGERED);
+	LCD.FillRectangle(38, 125, 62, 35);
+	LCD.SetFontColor(WHITE);
+	LCD.DrawRectangle(37,124, 63, 36);
+	LCD.SetFontColor(BLACK);
+	LCD.DrawRectangle(36, 123, 65, 38);
+
+	LCD.SetFontColor(ORANGERED);
+	LCD.FillRectangle(200, 125, 62, 35);
+	LCD.SetFontColor(WHITE);
+	LCD.DrawRectangle(199,124, 63, 36);
+	LCD.SetFontColor(BLACK);
+	LCD.DrawRectangle(198, 123, 65, 38);
+
+	LCD.SetFontColor(ORANGERED);
+	LCD.FillRectangle(190, 190, 86, 35);
+	LCD.SetFontColor(WHITE);
+	LCD.DrawRectangle(189,189, 87, 36);
+	LCD.SetFontColor(BLACK);
+	LCD.DrawRectangle(188, 188, 89, 38);
+
+	LCD.SetFontColor(ORANGERED);
+	LCD.FillRectangle(28, 190, 86, 35);
+	LCD.SetFontColor(WHITE);
+	LCD.DrawRectangle(27,189, 87, 36);
+	LCD.SetFontColor(BLACK);
+	LCD.DrawRectangle(26, 188, 89, 38);
+
+	LCD.WriteAt("Start", 38, 136);
+	LCD.WriteAt("Stats", 200, 136);
+	LCD.WriteAt("Credits", 190, 200);
+	LCD.WriteAt("Manual", 33, 200);
+	LCD.Update();
+
+	float touchx, touchy;
+	
+	while(!LCD.Touch(&touchx, &touchy));
+
+		if(touchx>=35 && touchx<=101 && touchy>=123 && touchy<=161)
+		{
+			printf("start");
+			return PLAY_GAME;
+		}
+
+		if(touchx>=197 && touchx<=263 && touchy>=123 && touchy<=161)
+		{
+			printf("Stats");
+			return STATS;
+		}
+
+		if(touchx>=187 && touchx<=276 && touchy>=187 && touchy<=225)
+		{
+			printf("Credits");
+			return CREDITS;
+		}
+
+		if(touchx>=25 && touchx<=115 && touchy>=187 && touchy<=226)
+		{
+			printf("manual");
+			return MANUAL;
+		}
+
+	
+}
+enum NextState manual()
+{
+	
+	LCD.SetBackgroundColor(BLACK);
+	LCD.Clear();
+	LCD.SetFontColor(RED);
+
+	LCD.WriteAt("Manual", 50, 60);
+	
+	while(1) LCD.Update();
+
+}
+enum NextState stats()
+{
+
+	LCD.SetBackgroundColor(BLACK);
+	LCD.Clear();
+	LCD.SetFontColor(RED);
+	LCD.WriteAt("STATS", 50, 60);	
+	while (1) LCD.Update();
+
+
+}
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 
@@ -317,6 +439,16 @@ int main() {
 			break;
 		case PLAY_GAME:
 			next_state = play_game();
+			break;
+		case MANUAL:
+			next_state = manual();
+			break;
+		case STATS:
+			next_state = stats();
+			break;
+		case CREDITS:
+			next_state = credits();
+			break;
 		}
 	}
 	return 0;
