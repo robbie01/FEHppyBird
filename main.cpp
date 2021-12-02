@@ -44,7 +44,7 @@ public:
 
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {
 		if (x < PIPEXMIN) this->x = PIPEXMIN;
-		else if (x > PIPEXMAX) this->x = PIPEXMAX;
+		//else if (x > PIPEXMAX) this->x = PIPEXMAX;
 	}
 
 	void update() {
