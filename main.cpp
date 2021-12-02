@@ -8,7 +8,7 @@
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
-constexpr int PIPEGAPSIZE = 40;
+constexpr int PIPEGAPSIZE = 55;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
 constexpr int PIPEXMIN = 0;
@@ -18,13 +18,14 @@ constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE - 30;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
+constexpr int BIRDYSTART = 70;
 constexpr int BIRDXPOS = 75;
 
 constexpr int SCOREXPOS = 150;
 constexpr int SCOREYPOS = 30;
 
-constexpr float BIRDGRAVITY = 0.2;
-constexpr float BIRDFLAPVELOCITY = -3;
+constexpr float BIRDGRAVITY = 0.6;
+constexpr float BIRDFLAPVELOCITY = -6;
 constexpr float BIRDYMIN = 0;
 constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
@@ -418,7 +419,7 @@ enum NextState play_game() {
 	//pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH);
 
 	//Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
-	Bird bird(0, score);
+	Bird bird(BIRDYSTART, score);
 
 	int waitingforup = 0;
 
