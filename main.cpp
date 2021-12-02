@@ -18,7 +18,7 @@ constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
-constexpr int BIRDXPOS = 150;
+constexpr int BIRDXPOS = 125;
 
 constexpr float BIRDGRAVITY = 0.2;
 constexpr float BIRDFLAPVELOCITY = -3;
@@ -147,9 +147,9 @@ public:
 	void render() const {
 		LCD.SetFontColor(0xFFFF00);
 		//LCD.FillRectangle(150, (int)y, 20, 20);
-		LCD.FillCircle(160, y + 10, 10);
+		LCD.FillCircle(BIRDXPOS+10, y + 10, 10);
 		LCD.SetFontColor(0);
-		LCD.DrawCircle(160, y + 10, 10);
+		LCD.DrawCircle(BIRDXPOS+10, y + 10, 10);
 	}
 
 	void feedCollision(Pipe &pipe) {
