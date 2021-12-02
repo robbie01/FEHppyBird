@@ -3,13 +3,6 @@
 #include "FEHUtility.h"
 #include "FEHSD.h"
 
-constexpr int DVDXMIN = -2;
-constexpr int DVDXMAX = 284;
-constexpr int DVDYMIN = 0;
-constexpr int DVDYMAX = 226;
-constexpr int DVDDXI = 1;
-constexpr int DVDDYI = 1;
-
 constexpr int PIPEGAPSIZE = 60;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
