@@ -490,6 +490,15 @@ enum NextState play_game() {
 	return next_state;
 }
 
+void do_quit() {
+	LCD.SetBackgroundColor(RED);
+	LCD.Clear();
+	LCD.SetFontColor(BLACK);
+	LCD.WriteAt("There is no escape.", 46, 112);
+
+	while (1) LCD.Update();
+}
+
 /*
  * Entry point to the application
  */
@@ -515,7 +524,8 @@ int main() {
 			break;
 		case QUIT:
 			//quit = true;
-			next_state = MAIN_MENU;
+			//next_state = MAIN_MENU;
+			do_quit();
 			break;
 		}
 	}
