@@ -3,6 +3,8 @@
 #include "FEHUtility.h"
 #include "FEHSD.h"
 
+#include <vector>
+
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
@@ -32,15 +34,44 @@ constexpr float BIRDYMAX = SCREENHEIGHT-BIRDHEIGHT-1;
 //     It has additional significance for certain objects.
 class GameObject {
 public:
+	GameObject() {}
+
+	// Delete copy constructor and assignment operators
+	GameObject(const GameObject&) = delete;
+	GameObject& operator=(const GameObject&) = delete;
+
+	// Undelete move constructor and assignment operator
+	GameObject(GameObject&&) = default;
+	GameObject& operator=(GameObject&&) = default;
+
 	virtual void update() = 0;
 	virtual void render() const = 0;
 	virtual bool is_dead() const = 0;
+};
+
+class ScoreCounter : public GameObject {
+	int score;
+public:
+	ScoreCounter(int score) : score(score) {}
+	ScoreCounter() : score(0) {}
+
+	void increment() {
+		++score;
+	}
+
+	void update() {}
+	bool is_dead() const { return false; }
+	void render() const {
+		LCD.SetFontColor(0xFF0000);
+		LCD.WriteAt(score, 0, 0);
+	}
 };
 
 class Pipe : public GameObject {
 	bool dead = false;
 public:
 	int gapheight, x;
+	bool processed = false;
 
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {
 		if (x < PIPEXMIN) this->x = PIPEXMIN;
@@ -60,7 +91,7 @@ public:
 	}
 
 	void render() const {
-		if (!dead) {
+		if (!dead && x <= PIPEXMAX) {
 			LCD.SetFontColor(0x00AA00);
 			LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
 			LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
@@ -71,8 +102,9 @@ public:
 class Bird : public GameObject {
 	float y, v = 0;
 	bool dead = false;
+	ScoreCounter &score;
 public:
-	Bird(float y) : y(y) {}
+	Bird(float y, ScoreCounter &score) : y(y), score(score) {}
 
 	void update() {
 		v += BIRDGRAVITY;
@@ -101,14 +133,17 @@ public:
 		LCD.FillCircle(160, y + 10, 10);
 	}
 
-	void feedCollision(Pipe mypipe) {
+	void feedCollision(Pipe &pipe) {
 		if (
+			(y < pipe.gapheight || y + BIRDHEIGHT > pipe.gapheight + PIPEGAPSIZE) &&
 			// If front of bird is in front of the front of pipe and back of bird is behind the front of the pipe
-			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
-			// If top of the bird is above the upper gap or bottom of the bird is below the lower gap
-			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + PIPEGAPSIZE)
+			(BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)
+			
 		) {
 			dead = true;
+		} else if (!pipe.processed && pipe.x + PIPEWIDTH < BIRDXPOS) {
+			pipe.processed = true;
+			score.increment();
 		}
 	}
 };
@@ -134,16 +169,23 @@ int main() {
 
 	float touchx, touchy;
 
-	Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
-	Bird bird(0);
+	ScoreCounter score(0);
+
+	std::vector<Pipe> pipes;
+	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
+	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH/2);
+	//pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH);
+
+	//Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
+	Bird bird(0, score);
 
 	int waitingforup = 0;
 
 	while (!bird.is_dead()) {
 		LCD.Clear();
-		pipe.render();
+		for (Pipe &pipe : pipes) pipe.render();
 		bird.render();
-		bird.feedCollision(pipe);
+		score.render();
 		LCD.Update();
 		if (LCD.Touch(&touchx, &touchy)) {
 			if (!waitingforup) {
@@ -154,7 +196,17 @@ int main() {
 			waitingforup = 0;
 		}
 		bird.update();
-		pipe.update();
+		for (Pipe &pipe : pipes) {
+			pipe.update();
+			bird.feedCollision(pipe);
+		}
+		for (auto it = pipes.begin(); it != pipes.end(); ++it) {
+			if (it->is_dead()) {
+				pipes.erase(it);
+				pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+PIPEWIDTH);
+				break;
+			}
+		}
 		//Sleep(20);
 		// Never end
 	}
