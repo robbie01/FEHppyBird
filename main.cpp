@@ -263,6 +263,7 @@ enum NextState main_menu() {
 
 	LCD.SetBackgroundColor(STEELBLUE);
 	LCD.Clear();
+	LCD.SetFontColor(WHITE);
 	LCD.FillCircle(25, 150, 25);
 	LCD.FillCircle(45, 130, 15);
 	LCD.FillCircle(75, 120, 25);
@@ -513,7 +514,8 @@ int main() {
 			next_state = credits();
 			break;
 		case QUIT:
-			quit = true;
+			//quit = true;
+			next_state = MAIN_MENU;
 			break;
 		}
 	}
