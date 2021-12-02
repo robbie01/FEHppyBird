@@ -308,10 +308,19 @@ enum NextState main_menu() {
 	LCD.SetFontColor(BLACK);
 	LCD.DrawRectangle(26, 188, 89, 38);
 
+	LCD.SetFontColor(ORANGERED);
+	LCD.FillRectangle(121, 155, 60, 33);
+	LCD.SetFontColor(WHITE);
+	LCD.DrawRectangle(120, 154, 61, 34);
+	LCD.SetFontColor(BLACK);
+	LCD.DrawRectangle(119, 153, 63, 36);
+
+	LCD.SetFontColor(BLACK);
 	LCD.WriteAt("Start", 38, 136);
 	LCD.WriteAt("Stats", 200, 136);
 	LCD.WriteAt("Credits", 190, 200);
 	LCD.WriteAt("Manual", 33, 200);
+	LCD.WriteAt("Quit", 126, 165);
 	LCD.Update();
 
 	float touchx, touchy;
@@ -331,10 +340,12 @@ enum NextState main_menu() {
 		} else if (touchx >= 187 && touchx <= 276 && touchy >= 187 && touchy <= 225) {
 			selected = true;
 			next_state = CREDITS;
-
 		} else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
 			selected = true;
 			next_state = MANUAL;
+		} else if (touchx >= 119 && touchx < 119+63 && touchy >= 153 && touchy < 153+36) {
+			selected = true;
+			next_state = QUIT;
 		}
 	}
 	return next_state;
