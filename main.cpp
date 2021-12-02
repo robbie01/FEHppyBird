@@ -208,7 +208,7 @@ class Backdrop : public GameObject {
 	Image img;
 public:
 	Backdrop() {
-		read_image("bliss.txt", img);
+		read_image("img/bliss.txt", img);
 	}
 
 	void update() {
@@ -459,7 +459,7 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	display_image("bob.txt", 0, 0);
+	display_image("img/bob.txt", 0, 0);
 
 	LCD.SetFontColor(0);
 	LCD.FillRectangle(12, 33, 90, 22);
@@ -497,7 +497,7 @@ enum NextState play_game() {
 
 void do_quit() {
 	LCD.Clear();
-	display_image("unsure.txt", 0, 0);
+	display_image("img/unsure.txt", 0, 0);
 	LCD.SetFontColor(BLACK);
 	LCD.WriteAt("There is no escape.", 45, 111);
 	LCD.WriteAt("There is no escape.", 47, 113);
