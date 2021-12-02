@@ -2,9 +2,6 @@
 
 ## Todo
 * Create menu
-* Create partial website
-* Add regenerating pipe
-* Add multiple pipes
 * Add persistent leaderboard
 
 [Flowchart](https://www.figma.com/file/E5ZmUvbhixMxcTwcUR0In5/SDP-21-Flowchart?node-id=0%3A1)
