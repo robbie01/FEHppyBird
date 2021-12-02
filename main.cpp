@@ -14,7 +14,7 @@ constexpr int PIPEVELOCITY = -2;
 constexpr int PIPEXMIN = 0;
 constexpr int PIPEXMAX = SCREENWIDTH - PIPEWIDTH;
 constexpr int PIPEGAPMIN = 0;
-constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
+constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE - 30;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
@@ -69,7 +69,10 @@ public:
 	void update() {}
 	bool is_dead() const { return false; }
 	void render() const {
-		LCD.SetFontColor(0xFFFFFF);
+		LCD.SetFontColor(BLACK);
+		LCD.WriteAt(score, SCOREXPOS+1, SCOREYPOS+1);
+		LCD.WriteAt(score, SCOREXPOS+2, SCOREYPOS+2);
+		LCD.SetFontColor(WHITE);
 		LCD.WriteAt(score, SCOREXPOS, SCOREYPOS);
 	}
 };
@@ -101,15 +104,21 @@ public:
 		if (!dead) {
 			if (x <= PIPEXMAX) {
 				LCD.SetFontColor(0x00AA00);
+				// Draw top pipe
 				LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
+				// Draw bottom pipe
 				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				// Draw border
 				LCD.SetFontColor(0);
 				LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
 				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 			} else if (x < SCREENWIDTH) {
 				LCD.SetFontColor(0x00AA00);
+				// Draw top pipe
 				LCD.FillRectangle(x, 0, SCREENWIDTH-x, gapheight);
+				// Draw bottom pipe
 				LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+				// Draw border
 				LCD.SetFontColor(0);
 				LCD.DrawRectangle(x, 0, SCREENWIDTH-x, gapheight);
 				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, SCREENWIDTH-x, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
