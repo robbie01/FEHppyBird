@@ -57,23 +57,26 @@ public:
 };
 
 class ScoreCounter : public GameObject {
-	int score;
+	int _score;
 public:
-	ScoreCounter(int score) : score(score) {}
-	ScoreCounter() : score(0) {}
+	ScoreCounter(int score) : _score(score) {}
+	ScoreCounter() : _score(0) {}
 
 	void increment() {
-		++score;
+		++_score;
 	}
 
 	void update() {}
 	bool is_dead() const { return false; }
 	void render() const {
 		LCD.SetFontColor(BLACK);
-		LCD.WriteAt(score, SCOREXPOS + 1, SCOREYPOS + 1);
-		LCD.WriteAt(score, SCOREXPOS + 2, SCOREYPOS + 2);
+		LCD.WriteAt(_score, SCOREXPOS + 1, SCOREYPOS + 1);
+		LCD.WriteAt(_score, SCOREXPOS + 2, SCOREYPOS + 2);
 		LCD.SetFontColor(WHITE);
-		LCD.WriteAt(score, SCOREXPOS, SCOREYPOS);
+		LCD.WriteAt(_score, SCOREXPOS, SCOREYPOS);
+	}
+	int score() const {
+		return _score;
 	}
 };
 
@@ -466,7 +469,8 @@ enum NextState play_game() {
 	LCD.DrawRectangle(12, 56, 174, 22);
 
 	LCD.SetFontColor(0xFF0000);
-	LCD.WriteAt("You died!", 1, 1);
+	LCD.WriteRC("You died! Score:", 0, 0);
+	LCD.WriteRC(score.score(), 0, 17);
 
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Restart", 14, 37);
