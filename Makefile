@@ -31,7 +31,7 @@ all: pre-build $(EXEC)
 pre-build:
 ifeq ($(OS),Windows_NT)	
 # check for internet connection
-	@ping -n 1 -w 1000 $(FEHURL) > NUL & \
+	@ping -n 1 -w 1000 1.1.1.1 > NUL & \
 	if errorlevel 1 \
 	( \
 		( echo "Warning: No internet connection!" ) \
@@ -46,7 +46,7 @@ ifeq ($(OS),Windows_NT)
 	) 
 else
 # Mac/Linux
-	@ping -c 1 -W 1000 $(FEHURL) > /dev/null ; \
+	@ping -c 1 -W 1000 1.1.1.1 > /dev/null ; \
 	if [ "$$?" -ne 0 ]; then \
 		echo "Warning: No internet connection!"; \
 	else \
@@ -69,6 +69,6 @@ ifeq ($(OS),Windows_NT)
 	del $(LIB_DIR)\*.d
 	del *.o *.d $(EXEC)
 else
-	rm $(LIB_DIR)/*.o $(LIB_DIR)/*.d
-	rm *.o *.d $(EXEC)
+	rm -f $(LIB_DIR)/*.o $(LIB_DIR)/*.d
+	rm -f *.o *.d $(EXEC)
 endif
