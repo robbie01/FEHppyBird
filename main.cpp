@@ -324,19 +324,15 @@ enum NextState main_menu() {
 
 		if (touchx >= 35 && touchx <= 101 && touchy >= 123 && touchy <= 161) {
 			selected = true;
-			printf("start");
 			next_state = PLAY_GAME;
 		} else if (touchx >= 197 && touchx <= 263 && touchy >= 123 && touchy <= 161) {
-			printf("Stats");
 			selected = true;
 			next_state = STATS;
 		} else if (touchx >= 187 && touchx <= 276 && touchy >= 187 && touchy <= 225) {
-			printf("Credits");
 			selected = true;
 			next_state = CREDITS;
 
 		} else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
-			printf("manual");
 			selected = true;
 			next_state = MANUAL;
 		}
