@@ -208,10 +208,17 @@ public:
 	}
 };
 
-/*
- * Entry point to the application
- */
-int main() {
+enum NextState {
+	MAIN_MENU,
+	PLAY_GAME
+};
+
+enum NextState main_menu() {
+	// TODO: add actual menu
+	return PLAY_GAME;
+}
+
+enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 
 	float touchx, touchy;
@@ -266,9 +273,46 @@ int main() {
 
 	display_image("bob.txt", 0, 0);
 
-	LCD.SetFontColor(0xFF0000);
-	LCD.Write("You died!");
+	LCD.SetFontColor(0);
+	LCD.FillRectangle(12, 33, 90, 22);
 
-	while (1) LCD.Update();
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.DrawRectangle(12, 33, 90, 22);
+
+	LCD.SetFontColor(0xFF0000);
+	LCD.WriteAt("You died!", 1, 1);
+
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteAt("Restart", 14, 37);
+	LCD.WriteAt("Return to menu", 14, 60);
+
+	bool selected = false;
+	enum NextState next_state;
+
+	while (!selected) {
+		while (!LCD.Touch(&touchx, &touchy));
+		if (touchx >= 12 && touchx < 12+90 && touchy >= 33 && touchy < 33+22) {
+			selected = true;
+			next_state = PLAY_GAME;
+		}
+	}
+
+	return next_state;
+}
+
+/*
+ * Entry point to the application
+ */
+int main() {
+	enum NextState next_state = MAIN_MENU;
+	while (true) {
+		switch (next_state) {
+		case MAIN_MENU:
+			next_state = main_menu();
+			break;
+		case PLAY_GAME:
+			next_state = play_game();
+		}
+	}
 	return 0;
 }
