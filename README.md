@@ -37,14 +37,11 @@ Idk i dont use it
 
 ## Building
 
-### On Windows
+### Linux and MacOS
+
+`make`
+
+### Windows
 
     mingw32-make.exe
 
-### On macOS
-
-It's probably just `make`
-
-### On Linux
-
-    make -f Makefile.linux
