@@ -25,6 +25,10 @@ constexpr float BIRDFLAPVELOCITY = -3;
 constexpr float BIRDYMIN = 0;
 constexpr float BIRDYMAX = SCREENHEIGHT-BIRDHEIGHT-1;
 
+constexpr int BACKDROPVELOCITY = -1;
+
+using Image = unsigned int[SCREENWIDTH*SCREENHEIGHT];
+
 #define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
 
 // Parent class for everything on the screen, interactive or not
@@ -95,6 +99,9 @@ public:
 			LCD.SetFontColor(0x00AA00);
 			LCD.FillRectangle(x, 0, PIPEWIDTH, gapheight);
 			LCD.FillRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
+			LCD.SetFontColor(0);
+			LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
+			LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
 		}
 	}
 };
@@ -131,6 +138,8 @@ public:
 		LCD.SetFontColor(0xFFFF00);
 		//LCD.FillRectangle(150, (int)y, 20, 20);
 		LCD.FillCircle(160, y + 10, 10);
+		LCD.SetFontColor(0);
+		LCD.DrawCircle(160, y + 10, 10);
 	}
 
 	void feedCollision(Pipe &pipe) {
@@ -147,18 +156,47 @@ public:
 	}
 };
 
-void display_image(const char *filename) {
-	unsigned int color;
+void read_image(const char *filename, Image img) {
 	FEHFile *imgfile = SD.FOpen(filename, "r");
-	for (int y = 0; y < 240; ++y) {
-		for (int x = 0; x < 320; ++x) {
-			SD.FScanf(imgfile, "%u", &color);
-			LCD.SetFontColor(color);
-			LCD.DrawPixel(x, y);
-		}
-	}
+	for (int i = 0; i < SCREENWIDTH*SCREENHEIGHT; ++i) SD.FScanf(imgfile, "%u", img+i);
 	SD.FClose(imgfile);
 }
+
+void display_image(const Image img, int x0, int y0) {
+	for (int y = 0; y < 240; ++y) {
+		for (int x = 0; x < 320; ++x) {
+			LCD.SetFontColor(img[y*SCREENWIDTH+x]);
+			LCD.DrawPixel(x+x0, y+y0);
+		}
+	}
+}
+
+void display_image(const char *filename, int x0, int y0) {
+	Image img;
+	read_image(filename, img);
+	display_image(img, x0, y0);
+}
+
+class Backdrop : public GameObject {
+	int x = 0;
+	Image img;
+public:
+	Backdrop() {
+		read_image("bliss.txt", img);
+	}
+
+	void update() {
+		x = (x + BACKDROPVELOCITY) % SCREENWIDTH;
+	}
+
+	bool is_dead() const {
+		return false;
+	}
+
+	void render() const {
+		display_image(img, x, 0);
+	}
+};
 
 /*
  * Entry point to the application
@@ -169,6 +207,7 @@ int main() {
 	float touchx, touchy;
 
 	ScoreCounter score(0);
+	Backdrop backdrop;
 
 	std::vector<Pipe> pipes;
 	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
@@ -182,10 +221,12 @@ int main() {
 
 	while (!bird.is_dead()) {
 		LCD.Clear();
+		backdrop.render();
 		for (Pipe &pipe : pipes) pipe.render();
 		bird.render();
 		score.render();
 		LCD.Update();
+		backdrop.update();
 		if (LCD.Touch(&touchx, &touchy)) {
 			if (!waitingforup) {
 				bird.flap();
@@ -213,7 +254,7 @@ int main() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	display_image("bob.txt");
+	display_image("bob.txt", 0, 0);
 
 	LCD.SetFontColor(0xFF0000);
 	LCD.Write("You died!");
