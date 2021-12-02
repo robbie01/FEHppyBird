@@ -18,7 +18,10 @@ constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
-constexpr int BIRDXPOS = 125;
+constexpr int BIRDXPOS = 75;
+
+constexpr int SCOREXPOS = 150;
+constexpr int SCOREYPOS = 30;
 
 constexpr float BIRDGRAVITY = 0.2;
 constexpr float BIRDFLAPVELOCITY = -3;
@@ -66,8 +69,8 @@ public:
 	void update() {}
 	bool is_dead() const { return false; }
 	void render() const {
-		LCD.SetFontColor(0xFF0000);
-		LCD.WriteAt(score, 0, 0);
+		LCD.SetFontColor(0xFFFFFF);
+		LCD.WriteAt(score, SCOREXPOS, SCOREYPOS);
 	}
 };
 
