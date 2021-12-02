@@ -58,10 +58,10 @@ else
 endif
 
 $(EXEC): $(OBJ_FILES) $(OBJS)
-	$(CC) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) $(OBJ_FILES) $(OBJS) -o $(EXEC) $(LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) $(OBJ_FILES) $(OBJS) -o $(EXEC) $(LDFLAGS)
 
 ./%.o: ./%.cpp
-	$(CC) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) -c -o $@ $<
 
 clean:
 ifeq ($(OS),Windows_NT)
