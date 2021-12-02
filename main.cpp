@@ -162,7 +162,7 @@ public:
 			(BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)
 		) {
 			dead = true;
-		} else if (!pipe.processed && pipe.x + PIPEWIDTH < BIRDXPOS) {
+		} else if (!pipe.processed && pipe.x + PIPEWIDTH/2 < BIRDXPOS + BIRDWIDTH/2) {
 			pipe.processed = true;
 			score.increment();
 		}
