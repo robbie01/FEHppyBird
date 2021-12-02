@@ -96,7 +96,9 @@ public:
 
 	void feedCollision(Pipe mypipe) {
 		if (
+			// If front of bird is in front of the front of pipe and back of bird is behind the front of the pipe
 			(BIRDXPOS + BIRDWIDTH > mypipe.x && BIRDXPOS < mypipe.x + PIPEWIDTH) &&
+			// If top of the bird is above the upper gap or bottom of the bird is below the lower gap
 			(y < mypipe.gapheight || y + BIRDHEIGHT > mypipe.gapheight + PIPEGAPSIZE)
 		) {
 			dead = true;
