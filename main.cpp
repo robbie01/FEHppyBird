@@ -8,13 +8,12 @@
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
 
-constexpr int PIPEGAPSIZE = 60;
+constexpr int PIPEGAPSIZE = 40;
 constexpr int PIPEWIDTH = 20;
 constexpr int PIPEVELOCITY = -2;
 constexpr int PIPEXMIN = 0;
 constexpr int PIPEXMAX = SCREENWIDTH - PIPEWIDTH;
-constexpr int PIPEGAPMIN = 0;
-constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
+constexpr int PIPEGAPMIN = 0; constexpr int PIPEGAPMAX = SCREENHEIGHT - PIPEGAPSIZE;
 
 constexpr int BIRDHEIGHT = 20;
 constexpr int BIRDWIDTH = 20;
