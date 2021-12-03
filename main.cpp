@@ -360,11 +360,17 @@ enum NextState manual() {
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
-	LCD.SetFontColor(RED);
+	LCD.SetFontColor(WHITE);
 
-	LCD.WriteAt("Manual", 50, 200);
+	LCD.WriteAt("Manual:", 20, 100);
+	LCD.WriteAt("* Click to flap", 20, 120);
+	LCD.WriteAt("* Fly through the gaps ", 20, 140);
+	LCD.WriteAt("  in the pipes to score.", 20, 160);
+	LCD.WriteAt("* If you hit a pipe or ", 20, 180);
+	LCD.WriteAt("  the ground, the game", 20, 200);
+	LCD.WriteAt("  ends", 20, 220);
 
-	LCD.SetFontColor(0xFFFFFF);
+	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("Return to menu", 14, 60);
 	LCD.Update();
 	bool selected = false;
@@ -453,7 +459,6 @@ enum NextState play_game() {
 			}
 		}
 		//Sleep(20);
-		// Never end
 	}
 
 	LCD.SetBackgroundColor(BLACK);

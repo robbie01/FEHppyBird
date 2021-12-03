@@ -7,7 +7,6 @@
   * Death animation
 * Improve pipe appearance
 * Create ground?
-* Write manual page
 
 [Flowchart](https://www.figma.com/file/E5ZmUvbhixMxcTwcUR0In5/SDP-21-Flowchart?node-id=0%3A1)
 
