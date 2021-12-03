@@ -16,7 +16,7 @@ ifeq ($(OS),Windows_NT)
 	SHELL := CMD
 else
 	ifeq ($(shell uname), Linux)
-		LDFLAGS = -lGLU -lGL -lX11
+		LDFLAGS = -lGLU -lGL -lX11 -lpthread -lm -ldl
 	else
 		LDFLAGS = -framework OpenGL -framework Cocoa
 	endif
