@@ -546,6 +546,8 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
+	if (dev) ma_device_uninit(dev);
+
 	display_image("img/bob.txt", 0, 0);
 
 	LCD.SetFontColor(0);
@@ -578,8 +580,6 @@ enum NextState play_game() {
 			next_state = MAIN_MENU;
 		}
 	}
-
-	if (dev) ma_device_uninit(dev);
 
 	return next_state;
 }
