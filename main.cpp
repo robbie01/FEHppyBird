@@ -454,7 +454,7 @@ ma_device *play_music() {
 	ma_result result;
     ma_decoder decoder;
     ma_device_config deviceConfig;
-	ma_backend backends[] = { ma_backend_alsa };
+	ma_backend backends[] = { ma_backend_alsa, ma_backend_wasapi };
     ma_device *device = new ma_device;
 
 	result = ma_decoder_init_file("snd/mtr.wav", NULL, &decoder);
@@ -478,7 +478,7 @@ ma_device *play_music() {
 
 	ma_decoder_uninit(&decoder);
 
-	if (ma_device_init_ex(backends, 1, NULL, &deviceConfig, device) != MA_SUCCESS) {
+	if (ma_device_init_ex(backends, 2, NULL, &deviceConfig, device) != MA_SUCCESS) {
         return NULL;
     }
 
