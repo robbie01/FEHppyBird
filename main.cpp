@@ -467,6 +467,7 @@ struct music_player_dynamic play_music() {
 
 	result = ma_decoder_init_file(BACKGROUND_AUDIO, NULL, &decoder);
 	if (result != MA_SUCCESS) {
+		delete device;
 		dyn.dev = NULL;
 		return dyn;
 	}
