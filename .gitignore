@@ -2,3 +2,4 @@ game.out
 game.exe
 *.o
 *.d
+.vscode/*

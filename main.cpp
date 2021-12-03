@@ -3,7 +3,11 @@
 #include "FEHSD.h"
 #include "FEHUtility.h"
 
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
+
 #include <vector>
+#include <algorithm>
 
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
@@ -232,6 +236,7 @@ enum NextState {
 	MANUAL,
 	QUIT
 };
+
 enum NextState credits() {
 
 	float touchx, touchy;
@@ -355,6 +360,7 @@ enum NextState main_menu() {
 	}
 	return next_state;
 }
+
 enum NextState manual() {
 	float touchx, touchy;
 
@@ -387,6 +393,7 @@ enum NextState manual() {
 
 	return next_state;
 }
+
 enum NextState stats() {
 	float touchx, touchy;
 
@@ -411,8 +418,83 @@ enum NextState stats() {
 
 	return next_state;
 }
+
+struct audio {
+	void *data;
+	unsigned int frameSize;
+	unsigned int length;
+	unsigned int pos;
+};
+
+void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+{
+    struct audio *au = (struct audio*)pDevice->pUserData;
+
+	unsigned char *audata = (unsigned char*)au->data;
+	unsigned char *outdata = (unsigned char*)pOutput;
+
+	while (frameCount > 0) {
+		if (frameCount < (au->length - au->pos)) {
+			std::copy(audata+au->frameSize*au->pos, audata+au->frameSize*(au->pos+frameCount), outdata);
+			au->pos += frameCount;
+			au->pos %= au->length;
+			frameCount = 0;
+		} else {
+			std::copy(audata+au->frameSize*au->pos, audata+au->frameSize*au->length, outdata);
+			outdata += au->frameSize*(au->length - au->pos);
+			frameCount -= au->length - au->pos;
+			au->pos = 0;
+		}
+	}
+
+    (void)pInput;
+}
+
+ma_device *play_music() {
+	ma_result result;
+    ma_decoder decoder;
+    ma_device_config deviceConfig;
+	ma_backend backends[] = { ma_backend_alsa };
+    ma_device *device = new ma_device;
+
+	result = ma_decoder_init_file("snd/mtr.wav", NULL, &decoder);
+	if (result != MA_SUCCESS) {
+		return NULL;
+	}
+
+	struct audio *au = new struct audio;
+	au->pos = 0;
+	au->frameSize = ma_get_bytes_per_frame(decoder.outputFormat, decoder.outputChannels);
+	au->length = ma_decoder_get_length_in_pcm_frames(&decoder);
+	au->data = new unsigned char[au->length*au->frameSize];
+	ma_decoder_read_pcm_frames(&decoder, au->data, au->length);
+
+    deviceConfig = ma_device_config_init(ma_device_type_playback);
+    deviceConfig.playback.format   = decoder.outputFormat;
+    deviceConfig.playback.channels = decoder.outputChannels;
+    deviceConfig.sampleRate        = decoder.outputSampleRate;
+    deviceConfig.dataCallback      = data_callback;
+    deviceConfig.pUserData         = au;
+
+	ma_decoder_uninit(&decoder);
+
+	if (ma_device_init_ex(backends, 1, NULL, &deviceConfig, device) != MA_SUCCESS) {
+        return NULL;
+    }
+
+	if (ma_device_start(device) != MA_SUCCESS) {
+        ma_device_uninit(device);
+        return NULL;
+    }
+
+    return device;
+}
+
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
+	LCD.Clear();
+
+	ma_device *dev = play_music();
 
 	float touchx, touchy;
 
@@ -496,6 +578,8 @@ enum NextState play_game() {
 			next_state = MAIN_MENU;
 		}
 	}
+
+	if (dev) ma_device_uninit(dev);
 
 	return next_state;
 }
