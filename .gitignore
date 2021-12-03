@@ -3,3 +3,5 @@ game.exe
 *.o
 *.d
 .vscode/*
+wasmMakefile
+towasm.sh

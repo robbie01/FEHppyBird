@@ -36,6 +36,8 @@ constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
 constexpr int BACKDROPVELOCITY = -1;
 
+constexpr char BACKGROUND_AUDIO[] = "snd/mtr.wav";
+
 using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
 #define RANDOMCOLOR (((Random.RandInt() & 0xFF) << 16) | ((Random.RandInt() & 0xFF) << 8) | ((Random.RandInt() & 0xFF) << 16))
@@ -463,7 +465,7 @@ struct music_player_dynamic play_music() {
     ma_device_config deviceConfig;
     ma_device *device = dyn.dev = new ma_device;
 
-	result = ma_decoder_init_file("snd/mtr.wav", NULL, &decoder);
+	result = ma_decoder_init_file(BACKGROUND_AUDIO, NULL, &decoder);
 	if (result != MA_SUCCESS) {
 		dyn.dev = NULL;
 		return dyn;
