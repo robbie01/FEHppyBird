@@ -436,7 +436,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 	unsigned char *outdata = (unsigned char*)pOutput;
 
 	while (frameCount > 0) {
-		if (frameCount < (au->length - au->pos)) {
+		if (frameCount <= (au->length - au->pos)) {
 			std::copy(au->data+au->frameSize*au->pos, au->data+au->frameSize*(au->pos+frameCount), outdata);
 			au->pos += frameCount;
 			au->pos %= au->length;
