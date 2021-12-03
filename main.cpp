@@ -421,7 +421,7 @@ enum NextState stats() {
 }
 
 struct audio {
-	void *data;
+	unsigned char *data;
 	unsigned int frameSize;
 	unsigned int length;
 	unsigned int pos;
@@ -431,17 +431,16 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 {
     struct audio *au = (struct audio*)pDevice->pUserData;
 
-	unsigned char *audata = (unsigned char*)au->data;
 	unsigned char *outdata = (unsigned char*)pOutput;
 
 	while (frameCount > 0) {
 		if (frameCount < (au->length - au->pos)) {
-			std::copy(audata+au->frameSize*au->pos, audata+au->frameSize*(au->pos+frameCount), outdata);
+			std::copy(au->data+au->frameSize*au->pos, au->data+au->frameSize*(au->pos+frameCount), outdata);
 			au->pos += frameCount;
 			au->pos %= au->length;
 			frameCount = 0;
 		} else {
-			std::copy(audata+au->frameSize*au->pos, audata+au->frameSize*au->length, outdata);
+			std::copy(au->data+au->frameSize*au->pos, au->data+au->frameSize*au->length, outdata);
 			outdata += au->frameSize*(au->length - au->pos);
 			frameCount -= au->length - au->pos;
 			au->pos = 0;
@@ -451,18 +450,26 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
     (void)pInput;
 }
 
-ma_device *play_music() {
+struct music_player_dynamic {
+	struct audio *au;
+	struct ma_device *dev;
+};
+
+struct music_player_dynamic play_music() {
+	struct music_player_dynamic dyn = { NULL, NULL };
+
 	ma_result result;
     ma_decoder decoder;
     ma_device_config deviceConfig;
-    ma_device *device = new ma_device;
+    ma_device *device = dyn.dev = new ma_device;
 
 	result = ma_decoder_init_file("snd/mtr.wav", NULL, &decoder);
 	if (result != MA_SUCCESS) {
-		return NULL;
+		dyn.dev = NULL;
+		return dyn;
 	}
 
-	struct audio *au = new struct audio;
+	struct audio *au = dyn.au = new struct audio;
 	au->pos = 0;
 	au->frameSize = ma_get_bytes_per_frame(decoder.outputFormat, decoder.outputChannels);
 	au->length = ma_decoder_get_length_in_pcm_frames(&decoder);
@@ -479,22 +486,32 @@ ma_device *play_music() {
 	ma_decoder_uninit(&decoder);
 
 	if (ma_device_init(NULL, &deviceConfig, device) != MA_SUCCESS) {
-        return NULL;
+		delete au->data;
+		delete au;
+		delete device;
+		dyn.au = NULL;
+		dyn.dev = NULL;
+        return dyn;
     }
 
 	if (ma_device_start(device) != MA_SUCCESS) {
         ma_device_uninit(device);
-        return NULL;
+		delete au->data;
+		delete au;
+		delete device;
+		dyn.au = NULL;
+		dyn.dev = NULL;
+        return dyn;
     }
 
-    return device;
+    return dyn;
 }
 
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	ma_device *dev = play_music();
+	struct music_player_dynamic dyn = play_music();
 
 	float touchx, touchy;
 
@@ -546,7 +563,14 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	if (dev) ma_device_uninit(dev);
+	if (dyn.au) {
+		delete dyn.au->data;
+		delete dyn.au;
+	}
+	if (dyn.dev) {
+		ma_device_uninit(dyn.dev);
+		delete dyn.dev;
+	}
 
 	display_image("img/bob.txt", 0, 0);
 
