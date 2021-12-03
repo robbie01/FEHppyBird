@@ -4,6 +4,7 @@
 * Add persistent leaderboard
   * Stats page
 * Improve bird appearance
+  * Death animation
 * Improve pipe appearance
 * Create ground?
 * Write manual page
