@@ -34,7 +34,7 @@ constexpr int BACKDROPVELOCITY = -1;
 
 constexpr char VIDFOLDER[20] = "chicken";
 //constexpr int VIDMAXFRAME = 648;
-constexpr int VIDMAXFRAME = 1652;
+constexpr int VIDMAXFRAME = 1814;
 
 using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
