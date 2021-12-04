@@ -4,6 +4,7 @@
 #include "FEHUtility.h"
 
 #include <vector>
+#include <string>
 
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
@@ -30,6 +31,8 @@ constexpr float BIRDYMIN = 0;
 constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
 constexpr int BACKDROPVELOCITY = -1;
+
+constexpr char VIDFOLDER[20] = "otis";
 
 using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
@@ -224,6 +227,42 @@ public:
 	}
 };
 
+class VideoBackdrop : public GameObject {
+	int frame = 0;
+	char imgFolder[200] = "vid/";
+	Image img;
+public:
+	VideoBackdrop() {
+		strcat(imgFolder, VIDFOLDER);
+		strcat(imgFolder, "/frames/");
+		char imgFilename[200] = "";
+		strcat(imgFilename, imgFolder);
+		strcat(imgFilename, "0");
+		strcat(imgFilename, ".txt");
+		read_image(imgFilename, img);
+	}
+
+	void update() {
+		char filenum[10];
+		sprintf(filenum, "%d", frame);
+		char imgFilename[200] = "";
+		strcat(imgFilename, imgFolder);
+		strcat(imgFilename, filenum);
+		strcat(imgFilename, ".txt");
+		read_image(imgFilename, img);
+		frame++;
+	}
+
+	bool is_dead() const {
+		return false;
+	}
+
+	void render() const {
+		display_image(img, 0, 0);
+	}
+};
+
+
 enum NextState {
 	MAIN_MENU,
 	PLAY_GAME,
@@ -417,7 +456,8 @@ enum NextState play_game() {
 	float touchx, touchy;
 
 	ScoreCounter score(0);
-	Backdrop backdrop;
+	//Backdrop backdrop;
+	VideoBackdrop backdrop;
 
 	std::vector<Pipe> pipes;
 	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX);

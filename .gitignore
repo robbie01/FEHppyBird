@@ -2,3 +2,7 @@ game.out
 game.exe
 *.o
 *.d
+vid/venv
+*.mp4
+*.jpg
+mtrvis/
