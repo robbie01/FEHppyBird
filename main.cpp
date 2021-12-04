@@ -32,7 +32,9 @@ constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
 constexpr int BACKDROPVELOCITY = -1;
 
-constexpr char VIDFOLDER[20] = "otis";
+constexpr char VIDFOLDER[20] = "chicken";
+//constexpr int VIDMAXFRAME = 648;
+constexpr int VIDMAXFRAME = 1652;
 
 using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
@@ -244,7 +246,7 @@ public:
 
 	void update() {
 		char filenum[10];
-		sprintf(filenum, "%d", frame);
+		sprintf(filenum, "%d", frame % VIDMAXFRAME);
 		char imgFilename[200] = "";
 		strcat(imgFilename, imgFolder);
 		strcat(imgFilename, filenum);

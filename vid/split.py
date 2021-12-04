@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import sys
 
-#Convert to 320x240 using https://www.onlineconverter.com/convert/41f8b722537cbec943cf429cc8d0766205 before running
+#Convert to 320x240 using https://www.onlineconverter.com/resize-video before running
 
 folder = sys.argv[1]
 sourcevid = cv2.VideoCapture(f"{folder}/source.mp4")
