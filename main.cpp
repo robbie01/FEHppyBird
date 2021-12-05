@@ -36,7 +36,8 @@ constexpr float BIRDYMAX = SCREENHEIGHT - BIRDHEIGHT - 1;
 
 constexpr int BACKDROPVELOCITY = -1;
 
-constexpr char BACKGROUND_AUDIO[] = "snd/mtr.wav";
+constexpr char BACKGROUND_MUSIC[] = "snd/mtr.wav";
+constexpr char DEATH_MUSIC[] = "snd/velvet.flac";
 
 using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 
@@ -457,7 +458,7 @@ struct music_player_dynamic {
 	struct ma_device *dev;
 };
 
-struct music_player_dynamic play_music() {
+struct music_player_dynamic play_music(const char *filename) {
 	struct music_player_dynamic dyn = { NULL, NULL };
 
 	ma_result result;
@@ -465,7 +466,7 @@ struct music_player_dynamic play_music() {
     ma_device_config deviceConfig;
     ma_device *device = dyn.dev = new ma_device;
 
-	result = ma_decoder_init_file(BACKGROUND_AUDIO, NULL, &decoder);
+	result = ma_decoder_init_file(filename, NULL, &decoder);
 	if (result != MA_SUCCESS) {
 		delete device;
 		dyn.dev = NULL;
@@ -514,7 +515,7 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	struct music_player_dynamic dyn = play_music();
+	struct music_player_dynamic dyn = play_music(BACKGROUND_MUSIC);
 
 	float touchx, touchy;
 
@@ -575,6 +576,8 @@ enum NextState play_game() {
 		delete dyn.dev;
 	}
 
+	dyn = play_music(DEATH_MUSIC);
+
 	display_image("img/bob.txt", 0, 0);
 
 	LCD.SetFontColor(0);
@@ -606,6 +609,15 @@ enum NextState play_game() {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
+	}
+
+	if (dyn.au) {
+		delete dyn.au->data;
+		delete dyn.au;
+	}
+	if (dyn.dev) {
+		ma_device_uninit(dyn.dev);
+		delete dyn.dev;
 	}
 
 	return next_state;
