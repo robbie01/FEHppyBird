@@ -40,6 +40,7 @@ using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 // update() updates internal state based on internal state only
 // render() is for drawing to the LCD
 // is_dead() signals to the "reaper" that the object should be destroyed.
+//     (This didn't end up actually happening in practice; the game was too simple for such reaping to be necessary.)
 //     It has additional significance for certain objects.
 class GameObject {
 public:
@@ -64,12 +65,18 @@ public:
 	ScoreCounter(int score) : _score(score) {}
 	ScoreCounter() : _score(0) {}
 
+	// Increment the score in a nice OO way; this makes modification of the score more traceable.
 	void increment() {
 		++_score;
 	}
 
+	// No frame-by-frame updates needed
 	void update() {}
+
+	// Immortal
 	bool is_dead() const { return false; }
+
+	// Throw it on the screen
 	void render() const {
 		LCD.SetFontColor(BLACK);
 		LCD.WriteAt(_score, SCOREXPOS + 1, SCOREYPOS + 1);
@@ -77,6 +84,8 @@ public:
 		LCD.SetFontColor(WHITE);
 		LCD.WriteAt(_score, SCOREXPOS, SCOREYPOS);
 	}
+
+	// Get the score in a nice OO way. Makes the value itself read-only so that it can only be modified through increment().
 	int score() const {
 		return _score;
 	}
@@ -88,12 +97,14 @@ public:
 	int gapheight, x;
 	bool processed = false;
 
+	// Clamp the horizontal position for whatever reason. Probably not needed but it doesn't hurt
 	Pipe(int gapheight, int x) : gapheight(gapheight), x(x) {
 		if (x < PIPEXMIN)
 			this->x = PIPEXMIN;
 		//else if (x > PIPEXMAX) this->x = PIPEXMAX;
 	}
 
+	// Move the pipe, and kill it at the edge.
 	void update() {
 		if (!dead) {
 			x += PIPEVELOCITY;
@@ -102,12 +113,13 @@ public:
 		}
 	}
 
+	// Get whether the pipe has been killed
 	bool is_dead() const {
 		return dead;
 	}
 
 	void render() const {
-		if (!dead) {
+		if (!dead) { // Only render if the pipe hasn't been killed
 			if (x <= PIPEXMAX) {
 				LCD.SetFontColor(0x00AA00);
 				// Draw top pipe
@@ -118,7 +130,7 @@ public:
 				LCD.SetFontColor(0);
 				LCD.DrawRectangle(x, 0, PIPEWIDTH, gapheight);
 				LCD.DrawRectangle(x, gapheight + PIPEGAPSIZE, PIPEWIDTH, SCREENHEIGHT - gapheight - PIPEGAPSIZE);
-			} else if (x < SCREENWIDTH) {
+			} else if (x < SCREENWIDTH) { // Handle the pipe not having made it to the left edge yet, draw partial pipe
 				LCD.SetFontColor(0x00AA00);
 				// Draw top pipe
 				LCD.FillRectangle(x, 0, SCREENWIDTH - x, gapheight);
@@ -133,21 +145,25 @@ public:
 	}
 };
 
+// Where it all happens
 class Bird : public GameObject {
 	float y, v = 0;
 	bool dead = false;
 	ScoreCounter &score;
 public:
+
+	// New bird just dropped
 	Bird(float y, ScoreCounter &score) : y(y), score(score) {}
 
-	void update() {
+	void update() { // Handle a change in the time domain
+		// The below two lines implement the semi-implicit Euler method (also known as the symplectic Euler method)
 		v += BIRDGRAVITY;
 		y += v;
-		if (y >= BIRDYMAX) {
+		if (y >= BIRDYMAX) { // Handle the bird hitting the ground
 			y = BIRDYMAX;
 			v = 0;
 			dead = true;
-		} else if (y <= BIRDYMIN) {
+		} else if (y <= BIRDYMIN) { // Prevent the bird from going off the top of the screen
 			y = BIRDYMIN;
 			v = 0;
 		}
@@ -157,11 +173,11 @@ public:
 		return dead;
 	}
 
-	void flap() {
+	void flap() { // Set the bird's velocity to a constant upward value on flap.
 		v = BIRDFLAPVELOCITY;
 	}
 
-	void render() const {
+	void render() const { // This poor bird is just a circle. Looks like a coin from a platformer
 		LCD.SetFontColor(0xFFFF00);
 		//LCD.FillRectangle(150, (int)y, 20, 20);
 		LCD.FillCircle(BIRDXPOS + 10, y + 10, 10);
@@ -176,6 +192,7 @@ public:
 		    (BIRDXPOS + BIRDWIDTH > pipe.x && BIRDXPOS < pipe.x + PIPEWIDTH)) {
 			dead = true;
 		} else if (!pipe.processed && pipe.x + PIPEWIDTH / 2 < BIRDXPOS + BIRDWIDTH / 2) {
+			// Handle the bird successfully navigating the pipe
 			pipe.processed = true;
 			score.increment();
 		}
@@ -183,6 +200,7 @@ public:
 };
 
 void read_image(const char *filename, Image img) {
+	// Read an image from a file into memory. The format of the file is to have a 32-bit integer on each line, each representing the color of a single pixel.
 	FEHFile *imgfile = SD.FOpen(filename, "r");
 	for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT; ++i)
 		SD.FScanf(imgfile, "%u", img + i);
@@ -190,6 +208,7 @@ void read_image(const char *filename, Image img) {
 }
 
 void display_image(const Image img, int x0, int y0) {
+	// Display an image from memory, possibly with an offset.
 	for (int y = 0; y < 240; ++y) {
 		for (int x = 0; x < 320; ++x) {
 			LCD.SetFontColor(img[y * SCREENWIDTH + x]);
@@ -199,6 +218,7 @@ void display_image(const Image img, int x0, int y0) {
 }
 
 void display_image(const char *filename, int x0, int y0) {
+	// Simple wrapper around the above two functions for images that don't need to be redrawn.
 	Image img;
 	read_image(filename, img);
 	display_image(img, x0, y0);
@@ -208,23 +228,29 @@ class Backdrop : public GameObject {
 	int x = 0;
 	Image img;
 public:
+
+	// Maybe the backdrop shouldn't be hardcoded in? I don't see why anyone wouldn't want this background tho
 	Backdrop() {
 		read_image("img/bliss.txt", img);
 	}
 
+	// The modulo isn't strictly necessary because the LCD library itself does that, but it's good at preventing int overflows
 	void update() {
 		x = (x + BACKDROPVELOCITY) % SCREENWIDTH;
 	}
 
+	// What is dead may never die
 	bool is_dead() const {
 		return false;
 	}
 
+	// Render!
 	void render() const {
 		display_image(img, x, 0);
 	}
 };
 
+// This game is implemented as a half-hearted state machine so that screens can be transitioned between easily without having to worry about a stack overflow.
 enum NextState {
 	MAIN_MENU,
 	PLAY_GAME,
@@ -233,8 +259,9 @@ enum NextState {
 	MANUAL,
 	QUIT
 };
-enum NextState credits() {
 
+// The faces behind the game. Give them the credit they deserve.
+enum NextState credits() {
 	float touchx, touchy;
 
 	LCD.SetBackgroundColor(BLACK);
@@ -266,6 +293,7 @@ enum NextState credits() {
 
 enum NextState main_menu() {
 	// TODO: add actual menu
+	// Why is that comment still there? We have a menu now.
 
 	LCD.SetBackgroundColor(STEELBLUE);
 	LCD.Clear();
@@ -281,6 +309,7 @@ enum NextState main_menu() {
 	LCD.FillCircle(300, 130, 30);
 	LCD.FillRectangle(0, 130, 320, 110);
 
+	// Add a pseudo font shadow
 	LCD.SetFontColor(BLACK);
 	LCD.WriteAt("Flappy Bird", 91, 41);
 	LCD.WriteAt("Flappy Bird", 89, 39);
@@ -335,6 +364,7 @@ enum NextState main_menu() {
 	enum NextState next_state;
 
 	while (!selected) {
+		// Handle all touches, not just valid ones. Don't do anything with the invalid touches though.
 		while (!LCD.Touch(&touchx, &touchy))
 			;
 
@@ -357,6 +387,8 @@ enum NextState main_menu() {
 	}
 	return next_state;
 }
+
+// Pro gamer guide right here
 enum NextState manual() {
 	float touchx, touchy;
 
@@ -390,11 +422,12 @@ enum NextState manual() {
 
 	return next_state;
 }
+
+// This will have real high scores pretty soon
 enum NextState stats() {
 	float touchx, touchy;
 
 	FEHFile *data;
-	int end;
 	std::vector<int> count;
 
 	data=SD.FOpen("High Scores.txt", "r");
@@ -464,6 +497,8 @@ badfile:
 
 	return next_state;
 }
+
+// video game
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 
@@ -472,17 +507,19 @@ enum NextState play_game() {
 	ScoreCounter score(0);
 	Backdrop backdrop;
 
-	std::vector<Pipe> pipes;
+	std::vector<Pipe> pipes; // Apologies for the std. I'm not creative to work around this myself, so I hope that vectors are possible on the Proteus.
 	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX);
 	pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX + 1), PIPEXMAX + SCREENWIDTH / 2);
 	//pipes.emplace_back(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX+SCREENWIDTH);
+	// Three pipes proved to be a bit too much.
 
 	//Pipe pipe(Random.RandInt() % (PIPEGAPMAX+1), PIPEXMAX);
 	Bird bird(BIRDYSTART, score);
 
-	int waitingforup = 0;
+	int waitingforup = 0; // Workaround to make the touch code edge-triggered rather than level-triggered
 
 	while (!bird.is_dead()) {
+		// pretty colors
 		LCD.Clear();
 		backdrop.render();
 		for (Pipe &pipe : pipes)
@@ -490,6 +527,8 @@ enum NextState play_game() {
 		bird.render();
 		score.render();
 		LCD.Update();
+
+		// mutable updates
 		backdrop.update();
 		if (LCD.Touch(&touchx, &touchy)) {
 			if (!waitingforup) {
@@ -502,8 +541,10 @@ enum NextState play_game() {
 		bird.update();
 		for (Pipe &pipe : pipes) {
 			pipe.update();
-			bird.feedCollision(pipe);
+			bird.feedCollision(pipe); // They're pretty yummy
 		}
+
+		// reap for a dead pipe and throw a new one at the back
 		for (auto it = pipes.begin(); it != pipes.end(); ++it) {
 			if (it->is_dead()) {
 				pipes.erase(it);
@@ -513,6 +554,7 @@ enum NextState play_game() {
 		}
 		//Sleep(20);
 	}
+	// If you're reading this, it's too late.
 
 	FEHFile *leaderboard;
 
