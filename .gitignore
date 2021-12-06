@@ -4,3 +4,4 @@ game.exe
 *.d
 High Scores.txt
 vid/
+.vscode/
