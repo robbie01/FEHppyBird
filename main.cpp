@@ -236,16 +236,17 @@ enum NextState credits() {
 
 	float touchx, touchy;
 
-	LCD.SetBackgroundColor(STEELBLUE);
+	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
-	LCD.SetFontColor(RED);
-
-	LCD.WriteAt("Sammy Aidja", 50, 100);
-	LCD.WriteAt("Robbie Langer", 50, 150);
-	LCD.WriteAt("Luke Weitler", 50, 200);
+	LCD.SetFontColor(WHITE);
+	LCD.WriteAt("Credits:", 25, 20);
+	LCD.WriteAt("Sammy Aidja", 50, 45);
+	LCD.WriteAt("Robbie Langer", 50, 70);
+	LCD.WriteAt("Luke Weitler", 50, 95);
 
 	LCD.SetFontColor(0xFFFFFF);
-	LCD.WriteAt("Return to menu", 14, 60);
+	LCD.WriteAt("Return to menu", 14, 200);
+	LCD.DrawRectangle(12, 194, 185, 27);
 	LCD.Update();
 	bool selected = false;
 	enum NextState next_state;
@@ -253,7 +254,7 @@ enum NextState credits() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 196 && touchy < 196 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -372,6 +373,7 @@ enum NextState manual() {
 
 	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("Return to menu", 14, 60);
+	LCD.DrawRectangle(12, 55, 175, 25);
 	LCD.Update();
 	bool selected = false;
 	enum NextState next_state;
@@ -393,9 +395,16 @@ enum NextState stats() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(RED);
-	LCD.WriteAt("STATS", 50, 200);
+	LCD.WriteAt("High Scores", 98, 10);
+	LCD.WriteAt("1)", 20, 40);
+	LCD.WriteAt("12", 50, 40);
+	LCD.WriteAt("2)", 20, 70);
+	LCD.WriteAt("9", 50, 70);
+	LCD.WriteAt("3)", 20, 100);
+	LCD.WriteAt("8", 50, 100);
 	LCD.SetFontColor(0xFFFFFF);
-	LCD.WriteAt("Return to menu", 14, 60);
+	LCD.WriteAt("Return to menu", 14, 200);
+	LCD.DrawRectangle(12, 196, 177, 22);
 	LCD.Update();
 	bool selected = false;
 	enum NextState next_state;
@@ -403,7 +412,7 @@ enum NextState stats() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 194 && touchy < 194 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
