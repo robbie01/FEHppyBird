@@ -4,6 +4,7 @@
 #include "FEHUtility.h"
 
 #include <vector>
+#include <algorithm>
 
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
@@ -392,16 +393,59 @@ enum NextState manual() {
 enum NextState stats() {
 	float touchx, touchy;
 
+	FEHFile *data;
+	int end;
+	std::vector<int> count;
+
+	data=SD.FOpen("High Scores.txt", "r");
+	if (!data) goto badfile;
+
+	int status;
+
+	do
+	{
+		int x;
+		status = SD.FScanf(data, "%i", &x);
+		if (status != EOF) count.push_back(x);
+	} while (status != EOF);
+
+	SD.FClose(data);
+
+	std::sort(count.begin(), count.end());
+
+badfile:
+
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
-	LCD.SetFontColor(RED);
+	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("High Scores", 98, 10);
-	LCD.WriteAt("1)", 20, 40);
-	LCD.WriteAt("12", 50, 40);
-	LCD.WriteAt("2)", 20, 70);
-	LCD.WriteAt("9", 50, 70);
-	LCD.WriteAt("3)", 20, 100);
-	LCD.WriteAt("8", 50, 100);
+	if (count.size() >= 1) {
+		LCD.WriteAt("1)", 20, 40);
+		LCD.WriteAt(count[count.size()-1], 50, 40);
+	}
+	if(count.size() >=2)
+	{
+		LCD.WriteAt("2)", 20, 70);
+		LCD.WriteAt(count[count.size()-2], 50, 70);
+	}
+	if(count.size()>=3)
+	{
+		LCD.WriteAt("3)", 20, 100);
+		LCD.WriteAt(count[count.size()-3], 50, 100);
+	}
+	
+	if(count.size()>=4)
+	{
+		LCD.WriteAt("4)", 20, 130);
+		LCD.WriteAt(count[count.size()-4], 50, 130);
+	}
+
+	if(count.size()>=5)
+	{
+		LCD.WriteAt("5)", 20, 160);
+		LCD.WriteAt(count[count.size()-5], 50, 160);
+	}
+
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Return to menu", 14, 200);
 	LCD.DrawRectangle(12, 196, 177, 22);
@@ -469,6 +513,12 @@ enum NextState play_game() {
 		}
 		//Sleep(20);
 	}
+
+	FEHFile *leaderboard;
+
+	leaderboard=SD.FOpen("High Scores.txt", "a");
+	SD.FPrintf(leaderboard, "%i\n", score.score());
+	SD.FClose(leaderboard);
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
