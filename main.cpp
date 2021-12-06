@@ -4,7 +4,6 @@
 #include "FEHUtility.h"
 
 #include <vector>
-#include <algorithm>
 
 constexpr int SCREENHEIGHT = 240;
 constexpr int SCREENWIDTH = 320;
@@ -423,6 +422,23 @@ enum NextState manual() {
 	return next_state;
 }
 
+// bubblesort j4f
+template <class T>
+void bubblesort(std::vector<T> &x) {
+	bool sorted = false;
+	while (!sorted) {
+		sorted = true;
+		for (auto it = x.begin(); it != x.end()-1; ++it) {
+			if (*it > *(it+1)) {
+				T temp = *it;
+				*it = *(it+1);
+				*(it+1) = temp;
+				sorted = false;
+			}
+		}
+	}
+}
+
 // This will have real high scores pretty soon
 enum NextState stats() {
 	float touchx, touchy;
@@ -435,16 +451,17 @@ enum NextState stats() {
 
 	int status;
 
-	do
+	while (true)
 	{
 		int x;
 		status = SD.FScanf(data, "%i", &x);
-		if (status != EOF) count.push_back(x);
-	} while (status != EOF);
+		if (status == EOF) break;
+		count.push_back(x);
+	}
 
 	SD.FClose(data);
 
-	std::sort(count.begin(), count.end());
+	bubblesort(count);
 
 badfile:
 
