@@ -449,13 +449,12 @@ enum NextState stats() {
 	data=SD.FOpen("High Scores.txt", "r");
 	if (!data) goto badfile;
 
-	int status;
+	int status, x;
 
 	while (true)
 	{
-		int x;
 		status = SD.FScanf(data, "%i", &x);
-		if (status == EOF) break;
+		if (status == EOF) break; // inelegant way of implementing a "Dahl loop"
 		count.push_back(x);
 	}
 
