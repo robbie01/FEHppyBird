@@ -509,7 +509,7 @@ badfile:
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 6 && touchy < 6 + 22) {
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 14 && touchy < 14 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
