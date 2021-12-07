@@ -266,17 +266,17 @@ enum NextState credits() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
-	LCD.WriteAt("Credits:", 25, 20);
-	LCD.WriteAt("Sammy Aidja", 50, 45);
-	LCD.WriteAt("Robbie Langer", 50, 70);
-	LCD.WriteAt("Luke Weiler", 50, 95);
-	LCD.WriteAt("Original Work:", 25, 120);
-	LCD.WriteAt("\"Flappy Bird\"", 50, 145);
-	LCD.WriteAt("by Dong Nguyen", 50, 170);
+	LCD.WriteAt("Credits:", 25, 50);
+	LCD.WriteAt("Sammy Aidja", 50, 75);
+	LCD.WriteAt("Robbie Langer", 50, 100);
+	LCD.WriteAt("Luke Weiler", 50, 125);
+	LCD.WriteAt("Original Work:", 25, 150);
+	LCD.WriteAt("\"Flappy Bird\"", 50, 175);
+	LCD.WriteAt("by Dong Nguyen", 50, 200);
 
 	LCD.SetFontColor(0xFFFFFF);
-	LCD.WriteAt("Return to menu", 14, 200);
-	LCD.DrawRectangle(12, 194, 185, 27);
+	LCD.WriteAt("Return to menu", 14, 20);
+	LCD.DrawRectangle(12, 16, 182, 24);
 	LCD.Update();
 	bool selected = false;
 	enum NextState next_state;
@@ -284,7 +284,7 @@ enum NextState credits() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 196 && touchy < 196 + 22) {
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 16 && touchy < 16 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -470,37 +470,37 @@ badfile:
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
-	LCD.WriteAt("High Scores", 98, 10);
+	LCD.WriteAt("High Scores", 98, 50);
 	if (count.size() >= 1) {
-		LCD.WriteAt("1)", 20, 40);
-		LCD.WriteAt(count[count.size()-1], 50, 40);
+		LCD.WriteAt("1)", 20, 80);
+		LCD.WriteAt(count[count.size()-1], 50, 80);
 	}
 	if(count.size() >=2)
 	{
-		LCD.WriteAt("2)", 20, 70);
-		LCD.WriteAt(count[count.size()-2], 50, 70);
+		LCD.WriteAt("2)", 20, 110);
+		LCD.WriteAt(count[count.size()-2], 50, 110);
 	}
 	if(count.size()>=3)
 	{
-		LCD.WriteAt("3)", 20, 100);
-		LCD.WriteAt(count[count.size()-3], 50, 100);
+		LCD.WriteAt("3)", 20, 140);
+		LCD.WriteAt(count[count.size()-3], 50, 140);
 	}
 	
 	if(count.size()>=4)
 	{
-		LCD.WriteAt("4)", 20, 130);
-		LCD.WriteAt(count[count.size()-4], 50, 130);
+		LCD.WriteAt("4)", 20, 170);
+		LCD.WriteAt(count[count.size()-4], 50, 170);
 	}
 
 	if(count.size()>=5)
 	{
-		LCD.WriteAt("5)", 20, 160);
-		LCD.WriteAt(count[count.size()-5], 50, 160);
+		LCD.WriteAt("5)", 20, 200);
+		LCD.WriteAt(count[count.size()-5], 50, 200);
 	}
 
 	LCD.SetFontColor(0xFFFFFF);
-	LCD.WriteAt("Return to menu", 14, 200);
-	LCD.DrawRectangle(12, 196, 177, 22);
+	LCD.WriteAt("Return to menu", 20, 20);
+	LCD.DrawRectangle(18, 16, 177, 22);
 	LCD.Update();
 	bool selected = false;
 	enum NextState next_state;
@@ -508,7 +508,7 @@ badfile:
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 194 && touchy < 194 + 22) {
+		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 6 && touchy < 6 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
