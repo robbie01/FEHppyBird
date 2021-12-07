@@ -398,7 +398,7 @@ enum NextState manual() {
 	LCD.SetFontColor(WHITE);
 
 	LCD.WriteAt("Manual:", 20, 100);
-	LCD.WriteAt("* Click to flap", 20, 120);
+	LCD.WriteAt("* Tap/click to flap", 20, 120);
 	LCD.WriteAt("* Fly through the gaps ", 20, 140);
 	LCD.WriteAt("  in the pipes to score.", 20, 160);
 	LCD.WriteAt("* If you hit a pipe or ", 20, 180);
@@ -516,7 +516,7 @@ badfile:
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
-	
+
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteRC("Loading...", 0, 0);
 	LCD.Update();
