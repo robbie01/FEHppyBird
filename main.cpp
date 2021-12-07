@@ -205,7 +205,7 @@ void read_image(const char *filename, Image img) {
 	SD.FClose(imgfile);
 }
 
-void display_image(const Image img, int x0, int y0) {
+void display_image(const Image img, int x0 = 0, int y0 = 0) {
 	// Display an image from memory, possibly with an offset.
 	for (int y = 0; y < 240; ++y) {
 		for (int x = 0; x < 320; ++x) {
@@ -215,7 +215,7 @@ void display_image(const Image img, int x0, int y0) {
 	}
 }
 
-void display_image(const char *filename, int x0, int y0) {
+void display_image(const char *filename, int x0 = 0, int y0 = 0) {
 	// Simple wrapper around the above two functions for images that don't need to be redrawn.
 	Image img;
 	read_image(filename, img);
@@ -580,7 +580,7 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	display_image("img/bob.txt", 0, 0);
+	display_image("img/bob.txt");
 
 	LCD.SetFontColor(0);
 	LCD.FillRectangle(12, 33, 90, 22);
@@ -618,7 +618,7 @@ enum NextState play_game() {
 
 void do_quit() {
 	LCD.Clear();
-	display_image("img/unsure.txt", 0, 0);
+	display_image("img/unsure.txt");
 	LCD.SetFontColor(BLACK);
 	LCD.WriteAt("There is no escape.", 45, 111);
 	LCD.WriteAt("There is no escape.", 47, 113);
