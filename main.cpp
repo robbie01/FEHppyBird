@@ -150,7 +150,6 @@ class Bird : public GameObject {
 	bool dead = false;
 	ScoreCounter &score;
 public:
-
 	// New bird just dropped
 	Bird(float y, ScoreCounter &score) : y(y), score(score) {}
 
@@ -227,7 +226,6 @@ class Backdrop : public GameObject {
 	int x = 0;
 	Image img;
 public:
-
 	// Maybe the backdrop shouldn't be hardcoded in? I don't see why anyone wouldn't want this background tho
 	Backdrop() {
 		read_image("img/bliss.txt", img);
@@ -383,7 +381,7 @@ enum NextState main_menu() {
 		} else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
 			selected = true;
 			next_state = MANUAL;
-		} else if (touchx >= 119 && touchx < 119+63 && touchy >= 153 && touchy < 153+36) {
+		} else if (touchx >= 119 && touchx < 119 + 63 && touchy >= 153 && touchy < 153 + 36) {
 			selected = true;
 			next_state = QUIT;
 		}
@@ -432,11 +430,11 @@ void bubblesort(std::vector<T> &x) {
 	bool sorted = false;
 	while (!sorted) {
 		sorted = true;
-		for (auto it = x.begin(); it != x.end()-1; ++it) {
-			if (*it > *(it+1)) {
+		for (auto it = x.begin(); it != x.end() - 1; ++it) {
+			if (*it > *(it + 1)) {
 				T temp = *it;
-				*it = *(it+1);
-				*(it+1) = temp;
+				*it = *(it + 1);
+				*(it + 1) = temp;
 				sorted = false;
 			}
 		}
@@ -450,15 +448,16 @@ enum NextState stats() {
 	FEHFile *data;
 	std::vector<int> count;
 
-	data=SD.FOpen("High Scores.txt", "r");
-	if (!data) goto badfile;
+	data = SD.FOpen("High Scores.txt", "r");
+	if (!data)
+		goto badfile;
 
 	int status, x;
 
-	while (true)
-	{
+	while (true) {
 		status = SD.FScanf(data, "%i", &x);
-		if (status == EOF) break; // inelegant way of implementing a "Dahl loop"
+		if (status == EOF)
+			break; // inelegant way of implementing a "Dahl loop"
 		count.push_back(x);
 	}
 
@@ -474,29 +473,25 @@ badfile:
 	LCD.WriteAt("High Scores", 98, 50);
 	if (count.size() >= 1) {
 		LCD.WriteAt("1)", 20, 80);
-		LCD.WriteAt(count[count.size()-1], 50, 80);
+		LCD.WriteAt(count[count.size() - 1], 50, 80);
 	}
-	if(count.size() >=2)
-	{
+	if (count.size() >= 2) {
 		LCD.WriteAt("2)", 20, 110);
-		LCD.WriteAt(count[count.size()-2], 50, 110);
+		LCD.WriteAt(count[count.size() - 2], 50, 110);
 	}
-	if(count.size()>=3)
-	{
+	if (count.size() >= 3) {
 		LCD.WriteAt("3)", 20, 140);
-		LCD.WriteAt(count[count.size()-3], 50, 140);
-	}
-	
-	if(count.size()>=4)
-	{
-		LCD.WriteAt("4)", 20, 170);
-		LCD.WriteAt(count[count.size()-4], 50, 170);
+		LCD.WriteAt(count[count.size() - 3], 50, 140);
 	}
 
-	if(count.size()>=5)
-	{
+	if (count.size() >= 4) {
+		LCD.WriteAt("4)", 20, 170);
+		LCD.WriteAt(count[count.size() - 4], 50, 170);
+	}
+
+	if (count.size() >= 5) {
 		LCD.WriteAt("5)", 20, 200);
-		LCD.WriteAt(count[count.size()-5], 50, 200);
+		LCD.WriteAt(count[count.size() - 5], 50, 200);
 	}
 
 	LCD.SetFontColor(0xFFFFFF);
@@ -578,7 +573,7 @@ enum NextState play_game() {
 
 	FEHFile *leaderboard;
 
-	leaderboard=SD.FOpen("High Scores.txt", "a");
+	leaderboard = SD.FOpen("High Scores.txt", "a");
 	SD.FPrintf(leaderboard, "%i\n", score.score());
 	SD.FClose(leaderboard);
 
