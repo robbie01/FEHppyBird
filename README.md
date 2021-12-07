@@ -13,7 +13,7 @@
 ## Setup
 Get the source code:
 
-    git clone --recurse-submodules git@github.com:robbie01/sdp-21.git
+    git clone --recurse-submodules --single-branch git@github.com:robbie01/sdp-21.git
 
 ## Prerequisites
 
