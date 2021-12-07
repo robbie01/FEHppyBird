@@ -1,12 +1,10 @@
-GITBINARY = git
-
-CPPFLAGS = -MMD -MP -Os -DOBJC_OLD_DISPATCH_PROTOTYPES -g
-
-WARNINGS = -Wall
+CFLAGS = -MMD -MP -Os -DOBJC_OLD_DISPATCH_PROTOTYPES -g
+CXXFLAGS = -std=c++11 $(CFLAGS)
+WARNINGS = -Wall -Wextra
 
 LIB_DIR = simulator_libraries
 
-INC_DIRS = -I$(LIB_DIR) -I.
+CPPFLAGS = -I$(LIB_DIR) -I.
 
 OBJS = $(LIB_DIR)/FEHLCD.o $(LIB_DIR)/FEHRandom.o $(LIB_DIR)/FEHSD.o $(LIB_DIR)/FEHUtility.o $(LIB_DIR)/tigr.o
 
@@ -25,13 +23,12 @@ else
 endif
 
 SRC_FILES := $(wildcard ./*.cpp)
-OBJ_FILES := $(patsubst ./%.cpp,./%.o,$(SRC_FILES))
+OBJS += $(patsubst ./%.cpp,./%.o,$(SRC_FILES))
 
-$(EXEC): $(OBJ_FILES) $(OBJS)
-	$(CXX) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) $(OBJ_FILES) $(OBJS) -o $(EXEC) $(LDFLAGS)
+$(EXEC): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(WARNINGS) $(INC_DIRS) $^ -o $@ $(LDFLAGS)
 
-./%.o: ./%.cpp
-	$(CXX) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) -c -o $@ $<
+.PHONY: clean
 
 clean:
 ifeq ($(OS),Windows_NT)
