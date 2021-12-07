@@ -441,6 +441,10 @@ void bubblesort(std::vector<T> &x) {
 	}
 }
 
+int min(int a, int b) {
+	return (a < b) ? a : b;
+}
+
 // This will have real high scores pretty soon
 enum NextState stats() {
 	float touchx, touchy;
@@ -472,11 +476,7 @@ badfile:
 	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("High Scores", 98, 50);
 
-	int maxStats = 5;
-	if (count.size() < 5) {
-		maxStats = count.size();
-	}
-	for(int i=1; i<maxStats+1; i++) {
+	for(int i=1; i<min(count.size(), 5)+1; i++) {
 		LCD.WriteAt(i, 20, 60 + 30*i);
 		LCD.WriteAt(")", 30, 60 + 30*i);
 		LCD.WriteAt(count[count.size() - i], 50, 60 + 30*i);
