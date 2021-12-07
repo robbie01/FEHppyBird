@@ -266,7 +266,8 @@ enum NextState credits() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
-	LCD.WriteAt("Credits:", 25, 50);
+
+	LCD.WriteAt("Staff:", 25, 50);
 	LCD.WriteAt("Sammy Aidja", 50, 75);
 	LCD.WriteAt("Robbie Langer", 50, 100);
 	LCD.WriteAt("Luke Weiler", 50, 125);
