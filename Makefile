@@ -27,35 +27,6 @@ endif
 SRC_FILES := $(wildcard ./*.cpp)
 OBJ_FILES := $(patsubst ./%.cpp,./%.o,$(SRC_FILES))
 
-all: pre-build $(EXEC)
-
-pre-build:
-ifeq ($(OS),Windows_NT)	
-# check for internet connection
-	@ping -n 1 -w 1000 1.1.1.1 > NUL & \
-	if errorlevel 1 \
-	( \
-		( echo "Warning: No internet connection!" ) \
-	) \
-	else \
-	( \
-		( \
-			cd $(LIB_DIR) && \
-			cd .. \
-		) \
-	) 
-else
-# Mac/Linux
-	@ping -c 1 -W 1000 1.1.1.1 > /dev/null ; \
-	if [ "$$?" -ne 0 ]; then \
-		echo "Warning: No internet connection!"; \
-	else \
-		cd $(LIB_DIR) ; \
-		cd .. ; \
-	fi \
-
-endif
-
 $(EXEC): $(OBJ_FILES) $(OBJS)
 	$(CXX) $(CPPFLAGS) $(WARNINGS) $(INC_DIRS) $(OBJ_FILES) $(OBJS) -o $(EXEC) $(LDFLAGS)
 
