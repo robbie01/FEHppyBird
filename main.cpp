@@ -471,6 +471,7 @@ badfile:
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("High Scores", 98, 50);
+
 	if (count.size() >= 1) {
 		LCD.WriteAt("1)", 20, 80);
 		LCD.WriteAt(count[count.size() - 1], 50, 80);
@@ -483,12 +484,10 @@ badfile:
 		LCD.WriteAt("3)", 20, 140);
 		LCD.WriteAt(count[count.size() - 3], 50, 140);
 	}
-
 	if (count.size() >= 4) {
 		LCD.WriteAt("4)", 20, 170);
 		LCD.WriteAt(count[count.size() - 4], 50, 170);
 	}
-
 	if (count.size() >= 5) {
 		LCD.WriteAt("5)", 20, 200);
 		LCD.WriteAt(count[count.size() - 5], 50, 200);
