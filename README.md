@@ -11,11 +11,9 @@
 [Flowchart](https://www.figma.com/file/E5ZmUvbhixMxcTwcUR0In5/SDP-21-Flowchart?node-id=0%3A1)
 
 ## Setup
-To get libraries submodule:
+Get the source code:
 
-    git submodule update --recursive --init
-
-Note: this is done automatically by the Makefile
+    git clone --recurse-submodules git@github.com:robbie01/sdp-21.git
 
 ## Prerequisites
 
