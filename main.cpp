@@ -573,8 +573,8 @@ enum NextState play_game() {
 
 	FEHFile *leaderboard;
 
-	leaderboard = SD.FOpen("High Scores.txt", "a");
-	SD.FPrintf(leaderboard, "%i\n", score.score());
+	leaderboard = SD.FOpen("High Scores.txt", "a"); // Open file in "append" mode.
+	SD.FPrintf(leaderboard, "%i\n", score.score()); // Blindly throw the new score on a line at the end
 	SD.FClose(leaderboard);
 
 	LCD.SetBackgroundColor(BLACK);
@@ -617,9 +617,13 @@ enum NextState play_game() {
 }
 
 void do_quit() {
+	// When I tried to make the quit button actually quit the game, somehow it flipped a coin to see
+	// if the game would load normally or quit on its own before you could even hit "play". I didn't want to
+	// get rid of the button, so I just made it softlock with an unsettling image to encourage the player to
+	// close the game manually.
 	LCD.Clear();
 	display_image("img/unsure.txt");
-	LCD.SetFontColor(BLACK);
+	LCD.SetFontColor(BLACK); // The next 4 lines emulate a text border that wraps around characters rather than a region.
 	LCD.WriteAt("There is no escape.", 45, 111);
 	LCD.WriteAt("There is no escape.", 47, 113);
 	LCD.WriteAt("There is no escape.", 45, 113);
@@ -634,6 +638,8 @@ void do_quit() {
  * Entry point to the application
  */
 int main() {
+	// This game is implemented as a half-hearted state machine, where each screen returns the
+	// next screen as a "next state", which main() processes accordingly.
 	enum NextState next_state = MAIN_MENU;
 	bool quit = false;
 	while (!quit) {
@@ -654,8 +660,8 @@ int main() {
 			next_state = credits();
 			break;
 		case QUIT:
+			// See do_quit() for why this doesn't actually quit the game.
 			//quit = true;
-			//next_state = MAIN_MENU;
 			do_quit();
 			break;
 		}
