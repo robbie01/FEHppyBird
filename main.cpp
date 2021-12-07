@@ -150,7 +150,6 @@ class Bird : public GameObject {
 	bool dead = false;
 	ScoreCounter &score;
 public:
-
 	// New bird just dropped
 	Bird(float y, ScoreCounter &score) : y(y), score(score) {}
 
@@ -206,7 +205,7 @@ void read_image(const char *filename, Image img) {
 	SD.FClose(imgfile);
 }
 
-void display_image(const Image img, int x0, int y0) {
+void display_image(const Image img, int x0 = 0, int y0 = 0) {
 	// Display an image from memory, possibly with an offset.
 	for (int y = 0; y < 240; ++y) {
 		for (int x = 0; x < 320; ++x) {
@@ -216,7 +215,7 @@ void display_image(const Image img, int x0, int y0) {
 	}
 }
 
-void display_image(const char *filename, int x0, int y0) {
+void display_image(const char *filename, int x0 = 0, int y0 = 0) {
 	// Simple wrapper around the above two functions for images that don't need to be redrawn.
 	Image img;
 	read_image(filename, img);
@@ -227,7 +226,6 @@ class Backdrop : public GameObject {
 	int x = 0;
 	Image img;
 public:
-
 	// Maybe the backdrop shouldn't be hardcoded in? I don't see why anyone wouldn't want this background tho
 	Backdrop() {
 		read_image("img/bliss.txt", img);
@@ -273,7 +271,7 @@ enum NextState credits() {
 	LCD.WriteAt("Luke Weiler", 50, 125);
 	LCD.WriteAt("Original Work:", 25, 150);
 	LCD.WriteAt("\"Flappy Bird\"", 50, 175);
-	LCD.WriteAt("by Dong Nguyen", 50, 200);
+	LCD.WriteAt("by Dong Nguyen", 50, 200); // dong y u take flappy bird off of app store
 
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Return to menu", 14, 20);
@@ -285,7 +283,7 @@ enum NextState credits() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 16 && touchy < 16 + 22) {
+		if (touchx >= 12 && touchx < 12 + 182 && touchy >= 16 && touchy < 16 + 24) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -383,7 +381,7 @@ enum NextState main_menu() {
 		} else if (touchx >= 25 && touchx <= 115 && touchy >= 187 && touchy <= 226) {
 			selected = true;
 			next_state = MANUAL;
-		} else if (touchx >= 119 && touchx < 119+63 && touchy >= 153 && touchy < 153+36) {
+		} else if (touchx >= 119 && touchx < 119 + 63 && touchy >= 153 && touchy < 153 + 36) {
 			selected = true;
 			next_state = QUIT;
 		}
@@ -400,7 +398,7 @@ enum NextState manual() {
 	LCD.SetFontColor(WHITE);
 
 	LCD.WriteAt("Manual:", 20, 100);
-	LCD.WriteAt("* Click to flap", 20, 120);
+	LCD.WriteAt("* Tap/click to flap", 20, 120);
 	LCD.WriteAt("* Fly through the gaps ", 20, 140);
 	LCD.WriteAt("  in the pipes to score.", 20, 160);
 	LCD.WriteAt("* If you hit a pipe or ", 20, 180);
@@ -417,7 +415,7 @@ enum NextState manual() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
+		if (touchx >= 12 && touchx < 12 + 175 && touchy >= 55 && touchy < 55 + 25) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -432,11 +430,11 @@ void bubblesort(std::vector<T> &x) {
 	bool sorted = false;
 	while (!sorted) {
 		sorted = true;
-		for (auto it = x.begin(); it != x.end()-1; ++it) {
-			if (*it > *(it+1)) {
+		for (auto it = x.begin(); it != x.end() - 1; ++it) {
+			if (*it > *(it + 1)) {
 				T temp = *it;
-				*it = *(it+1);
-				*(it+1) = temp;
+				*it = *(it + 1);
+				*(it + 1) = temp;
 				sorted = false;
 			}
 		}
@@ -450,15 +448,16 @@ enum NextState stats() {
 	FEHFile *data;
 	std::vector<int> count;
 
-	data=SD.FOpen("High Scores.txt", "r");
-	if (!data) goto badfile;
+	data = SD.FOpen("High Scores.txt", "r");
+	if (!data)
+		goto badfile;
 
 	int status, x;
 
-	while (true)
-	{
+	while (true) {
 		status = SD.FScanf(data, "%i", &x);
-		if (status == EOF) break; // inelegant way of implementing a "Dahl loop"
+		if (status == EOF)
+			break; // inelegant way of implementing a "Dahl loop"
 		count.push_back(x);
 	}
 
@@ -472,31 +471,26 @@ badfile:
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
 	LCD.WriteAt("High Scores", 98, 50);
+
 	if (count.size() >= 1) {
 		LCD.WriteAt("1)", 20, 80);
-		LCD.WriteAt(count[count.size()-1], 50, 80);
+		LCD.WriteAt(count[count.size() - 1], 50, 80);
 	}
-	if(count.size() >=2)
-	{
+	if (count.size() >= 2) {
 		LCD.WriteAt("2)", 20, 110);
-		LCD.WriteAt(count[count.size()-2], 50, 110);
+		LCD.WriteAt(count[count.size() - 2], 50, 110);
 	}
-	if(count.size()>=3)
-	{
+	if (count.size() >= 3) {
 		LCD.WriteAt("3)", 20, 140);
-		LCD.WriteAt(count[count.size()-3], 50, 140);
+		LCD.WriteAt(count[count.size() - 3], 50, 140);
 	}
-	
-	if(count.size()>=4)
-	{
+	if (count.size() >= 4) {
 		LCD.WriteAt("4)", 20, 170);
-		LCD.WriteAt(count[count.size()-4], 50, 170);
+		LCD.WriteAt(count[count.size() - 4], 50, 170);
 	}
-
-	if(count.size()>=5)
-	{
+	if (count.size() >= 5) {
 		LCD.WriteAt("5)", 20, 200);
-		LCD.WriteAt(count[count.size()-5], 50, 200);
+		LCD.WriteAt(count[count.size() - 5], 50, 200);
 	}
 
 	LCD.SetFontColor(0xFFFFFF);
@@ -509,7 +503,7 @@ badfile:
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 14 && touchy < 14 + 22) {
+		if (touchx >= 18 && touchx < 18 + 177 && touchy >= 16 && touchy < 16 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -521,6 +515,11 @@ badfile:
 // video game
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
+	LCD.Clear();
+
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
 
 	float touchx, touchy;
 
@@ -578,14 +577,18 @@ enum NextState play_game() {
 
 	FEHFile *leaderboard;
 
-	leaderboard=SD.FOpen("High Scores.txt", "a");
-	SD.FPrintf(leaderboard, "%i\n", score.score());
+	leaderboard = SD.FOpen("High Scores.txt", "a"); // Open file in "append" mode.
+	SD.FPrintf(leaderboard, "%i\n", score.score()); // Blindly throw the new score on a line at the end
 	SD.FClose(leaderboard);
 
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
-	display_image("img/bob.txt", 0, 0);
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
+
+	display_image("img/bob.txt");
 
 	LCD.SetFontColor(0);
 	LCD.FillRectangle(12, 33, 90, 22);
@@ -622,9 +625,20 @@ enum NextState play_game() {
 }
 
 void do_quit() {
+	// When I tried to make the quit button actually quit the game, somehow it flipped a coin to see
+	// if the game would load normally or quit on its own before you could even hit "play". I didn't want to
+	// get rid of the button, so I just made it softlock with an unsettling image to encourage the player to
+	// close the game manually.
+
+	LCD.SetBackgroundColor(0);
 	LCD.Clear();
-	display_image("img/unsure.txt", 0, 0);
-	LCD.SetFontColor(BLACK);
+
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
+
+	display_image("img/unsure.txt");
+	LCD.SetFontColor(BLACK); // The next 4 lines emulate a text border that wraps around characters rather than a region.
 	LCD.WriteAt("There is no escape.", 45, 111);
 	LCD.WriteAt("There is no escape.", 47, 113);
 	LCD.WriteAt("There is no escape.", 45, 113);
@@ -639,6 +653,8 @@ void do_quit() {
  * Entry point to the application
  */
 int main() {
+	// This game is implemented as a half-hearted state machine, where each screen returns the
+	// next screen as a "next state", which main() processes accordingly.
 	enum NextState next_state = MAIN_MENU;
 	bool quit = false;
 	while (!quit) {
@@ -659,8 +675,8 @@ int main() {
 			next_state = credits();
 			break;
 		case QUIT:
+			// See do_quit() for why this doesn't actually quit the game.
 			//quit = true;
-			//next_state = MAIN_MENU;
 			do_quit();
 			break;
 		}
