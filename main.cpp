@@ -515,6 +515,11 @@ badfile:
 // video game
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
+	LCD.Clear();
+	
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
 
 	float touchx, touchy;
 
@@ -579,6 +584,10 @@ enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
 
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
+
 	display_image("img/bob.txt");
 
 	LCD.SetFontColor(0);
@@ -620,7 +629,14 @@ void do_quit() {
 	// if the game would load normally or quit on its own before you could even hit "play". I didn't want to
 	// get rid of the button, so I just made it softlock with an unsettling image to encourage the player to
 	// close the game manually.
+
+	LCD.SetBackgroundColor(0);
 	LCD.Clear();
+
+	LCD.SetFontColor(0xFFFFFF);
+	LCD.WriteRC("Loading...", 0, 0);
+	LCD.Update();
+
 	display_image("img/unsure.txt");
 	LCD.SetFontColor(BLACK); // The next 4 lines emulate a text border that wraps around characters rather than a region.
 	LCD.WriteAt("There is no escape.", 45, 111);
