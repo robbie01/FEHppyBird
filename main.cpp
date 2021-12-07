@@ -271,7 +271,7 @@ enum NextState credits() {
 	LCD.WriteAt("Luke Weiler", 50, 125);
 	LCD.WriteAt("Original Work:", 25, 150);
 	LCD.WriteAt("\"Flappy Bird\"", 50, 175);
-	LCD.WriteAt("by Dong Nguyen", 50, 200);
+	LCD.WriteAt("by Dong Nguyen", 50, 200); // dong y u take flappy bird off of app store
 
 	LCD.SetFontColor(0xFFFFFF);
 	LCD.WriteAt("Return to menu", 14, 20);
@@ -283,7 +283,7 @@ enum NextState credits() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 16 && touchy < 16 + 22) {
+		if (touchx >= 12 && touchx < 12 + 182 && touchy >= 16 && touchy < 16 + 24) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -415,7 +415,7 @@ enum NextState manual() {
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 56 && touchy < 56 + 22) {
+		if (touchx >= 12 && touchx < 12 + 175 && touchy >= 55 && touchy < 55 + 25) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
@@ -504,7 +504,7 @@ badfile:
 	while (!selected) {
 		while (!LCD.Touch(&touchx, &touchy))
 			;
-		if (touchx >= 12 && touchx < 12 + 174 && touchy >= 14 && touchy < 14 + 22) {
+		if (touchx >= 18 && touchx < 18 + 177 && touchy >= 16 && touchy < 16 + 22) {
 			selected = true;
 			next_state = MAIN_MENU;
 		}
