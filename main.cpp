@@ -41,6 +41,7 @@ using Image = unsigned int[SCREENWIDTH * SCREENHEIGHT];
 // is_dead() signals to the "reaper" that the object should be destroyed.
 //     (This didn't end up actually happening in practice; the game was too simple for such reaping to be necessary.)
 //     It has additional significance for certain objects.
+//robbie
 class GameObject {
 public:
 	GameObject() {}
@@ -65,6 +66,7 @@ public:
 // the update() and is_dead() methods are left empty in this class because it is a GameObject that does not move or get killed
 // render() prints the score to the screen/HUD
 // score() gets the value of _score
+//robbie
 class ScoreCounter : public GameObject {
 	int _score;
 public:
@@ -106,6 +108,7 @@ public:
 // update() moves the pipe leftwards as long as the pipe is not dead and kills it if it cannot move left
 // is_dead() returns the value of dead
 // render() renders a visual representation of the pipe to the screen
+//robbie
 class Pipe : public GameObject {
 	bool dead = false;
 public:
@@ -171,6 +174,7 @@ public:
 // flap() sets the birds velocity to the constant BIRDFLAPVELOCITY
 // render() prints a visual representation of the bird to the LCD
 // feedCollision() determines if the bird collided with the pipe given in the parameters
+//robbie
 class Bird : public GameObject {
 	float y, v = 0;
 	bool dead = false;
@@ -208,7 +212,7 @@ public:
 		LCD.SetFontColor(0);
 		LCD.DrawCircle(BIRDXPOS + 10, y + 10, 10);
 	}
-
+	//luke
 	void feedCollision(Pipe &pipe) {
 		if (
 		    (y < pipe.gapheight || y + BIRDHEIGHT > pipe.gapheight + PIPEGAPSIZE) &&
@@ -222,7 +226,7 @@ public:
 		}
 	}
 };
-
+//robbie
 // Read an image from a file into memory. The format of the file is to have a 32-bit integer on each line, each representing the color of a single pixel.
 void read_image(const char *filename, Image img) {
 	FEHFile *imgfile = SD.FOpen(filename, "r");
@@ -255,6 +259,7 @@ void display_image(const char *filename, int x0 = 0, int y0 = 0) {
 // update() updates the position of the backdrop
 // is_dead() returns false because the backdrop doesn't die
 // render() displays the image
+//robbie
 class Backdrop : public GameObject {
 	int x = 0;
 	Image img;
@@ -291,6 +296,7 @@ enum NextState {
 };
 
 // Prints information about the faces behind the game. Give them the credit they deserve.
+//Sammy
 enum NextState credits() {
 	float touchx, touchy;
 
@@ -326,6 +332,7 @@ enum NextState credits() {
 }
 
 // Render the menu and listen for clicks
+//Sammy
 enum NextState main_menu() {
 	LCD.SetBackgroundColor(STEELBLUE);
 	LCD.Clear();
@@ -421,6 +428,7 @@ enum NextState main_menu() {
 }
 
 // Shows instructions for how to play the game and listens to see if you click to go back to the menu
+//Sammy
 enum NextState manual() {
 	float touchx, touchy;
 
@@ -478,6 +486,7 @@ int min(int a, int b) {
 }
 
 // Displays the top 5 scores; less if there aren't 5 scores yet. Listens for clicks to go back to main menu
+//Sammy
 enum NextState stats() {
 	float touchx, touchy;
 
@@ -534,6 +543,7 @@ badfile:
 }
 
 // Contains code for instantiating game objects and running a loop that updates and renders objects and listens for clicks
+//Robbie
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
@@ -647,6 +657,7 @@ enum NextState play_game() {
 
 
 // Show quit screen
+//Robbie
 void do_quit() {
 	// When I tried to make the quit button actually quit the game, somehow it flipped a coin to see
 	// if the game would load normally or quit on its own before you could even hit "play". I didn't want to
