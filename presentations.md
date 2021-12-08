@@ -27,7 +27,6 @@ We'll be surprised if you make it to 5...
 * Main Menu
 * Ability to Replay Game
 * Single-player mode
-
 * Advanced Graphics II
 * Persistent Statistics I
 * Artistry
@@ -35,11 +34,9 @@ We'll be surprised if you make it to 5...
 * Single Player Mode
 * Moving Objects II
 * Gravity Effects
-* Collision I
-
-  * and II
+* Collision II
 * Movement I
-* Persistent statistics I and II
+* Persistent statistics II
 * Resource tracking HUD
 
 ### Script

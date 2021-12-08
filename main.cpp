@@ -58,6 +58,13 @@ public:
 	virtual bool is_dead() const = 0;
 };
 
+// Class that manages the player's score
+// Private variable _score() holds the score and prevents it from being accessed by outside code
+// Can be instantiated with a defined starting score or set _score to 0 if no score is passed
+// increment() increases the value of _score by 1
+// the update() and is_dead() methods are left empty in this class because it is a GameObject that does not move or get killed
+// render() prints the score to the screen/HUD
+// score() gets the value of _score
 class ScoreCounter : public GameObject {
 	int _score;
 public:
@@ -90,6 +97,15 @@ public:
 	}
 };
 
+// Pipe Class stores and manages information about each pipe
+// dead tells the program if the pipe has reached the end of the screen and is killed
+// gapheight holds the distance from the top of the screen to the top of the gap
+// x holds the x position of the pipe
+// processed tells the program if the pipe has been updated or not
+// The constructor takes parameters gapheight and x, which set the x position and gapheight of the pipe as described previously
+// update() moves the pipe leftwards as long as the pipe is not dead and kills it if it cannot move left
+// is_dead() returns the value of dead
+// render() renders a visual representation of the pipe to the screen
 class Pipe : public GameObject {
 	bool dead = false;
 public:
@@ -144,7 +160,17 @@ public:
 	}
 };
 
-// Where it all happens
+// Bird class holds information about the bird
+// y is used to hold the vertical position of the bird
+// v is the velocity of the bird
+// dead states whether or not the bird should be rendered or not
+// ScoreCounter &score allows the bird to set the score from the bird methods
+// Constructor takes the initial position y and an instance of scorecounter as parameters
+// update() updates the position of the bird by applying gravity and it's velocity to it's position
+// is_dead() returns the value of dead
+// flap() sets the birds velocity to the constant BIRDFLAPVELOCITY
+// render() prints a visual representation of the bird to the LCD
+// feedCollision() determines if the bird collided with the pipe given in the parameters
 class Bird : public GameObject {
 	float y, v = 0;
 	bool dead = false;
@@ -197,16 +223,16 @@ public:
 	}
 };
 
+// Read an image from a file into memory. The format of the file is to have a 32-bit integer on each line, each representing the color of a single pixel.
 void read_image(const char *filename, Image img) {
-	// Read an image from a file into memory. The format of the file is to have a 32-bit integer on each line, each representing the color of a single pixel.
 	FEHFile *imgfile = SD.FOpen(filename, "r");
 	for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT; ++i)
 		SD.FScanf(imgfile, "%u", img + i);
 	SD.FClose(imgfile);
 }
 
+// Display an image from memory, possibly with an offset.
 void display_image(const Image img, int x0 = 0, int y0 = 0) {
-	// Display an image from memory, possibly with an offset.
 	for (int y = 0; y < 240; ++y) {
 		for (int x = 0; x < 320; ++x) {
 			LCD.SetFontColor(img[y * SCREENWIDTH + x]);
@@ -215,13 +241,20 @@ void display_image(const Image img, int x0 = 0, int y0 = 0) {
 	}
 }
 
+// Simple wrapper around the above two functions for images that don't need to be redrawn.
 void display_image(const char *filename, int x0 = 0, int y0 = 0) {
-	// Simple wrapper around the above two functions for images that don't need to be redrawn.
 	Image img;
 	read_image(filename, img);
 	display_image(img, x0, y0);
 }
 
+// Backdrop class holds and renders the image shown in the background during the game
+// x holds the horizontal position of the backdrop
+// img holds the Image content
+// The constructor reads the image "img/bliss.txt" to img
+// update() updates the position of the backdrop
+// is_dead() returns false because the backdrop doesn't die
+// render() displays the image
 class Backdrop : public GameObject {
 	int x = 0;
 	Image img;
@@ -257,7 +290,7 @@ enum NextState {
 	QUIT
 };
 
-// The faces behind the game. Give them the credit they deserve.
+// Prints information about the faces behind the game. Give them the credit they deserve.
 enum NextState credits() {
 	float touchx, touchy;
 
@@ -292,10 +325,8 @@ enum NextState credits() {
 	return next_state;
 }
 
+// Render the menu and listen for clicks
 enum NextState main_menu() {
-	// TODO: add actual menu
-	// Why is that comment still there? We have a menu now.
-
 	LCD.SetBackgroundColor(STEELBLUE);
 	LCD.Clear();
 	LCD.SetFontColor(WHITE);
@@ -389,7 +420,7 @@ enum NextState main_menu() {
 	return next_state;
 }
 
-// Pro gamer guide right here
+// Shows instructions for how to play the game and listens to see if you click to go back to the menu
 enum NextState manual() {
 	float touchx, touchy;
 
@@ -441,11 +472,12 @@ void bubblesort(std::vector<T> &x) {
 	}
 }
 
+// Finds the minimum of two values
 int min(int a, int b) {
 	return (a < b) ? a : b;
 }
 
-// This will have real high scores pretty soon
+// Displays the top 5 scores; less if there aren't 5 scores yet. Listens for clicks to go back to main menu
 enum NextState stats() {
 	float touchx, touchy;
 
@@ -501,7 +533,7 @@ badfile:
 	return next_state;
 }
 
-// video game
+// Contains code for instantiating game objects and running a loop that updates and renders objects and listens for clicks
 enum NextState play_game() {
 	LCD.SetBackgroundColor(BLACK);
 	LCD.Clear();
@@ -613,6 +645,8 @@ enum NextState play_game() {
 	return next_state;
 }
 
+
+// Show quit screen
 void do_quit() {
 	// When I tried to make the quit button actually quit the game, somehow it flipped a coin to see
 	// if the game would load normally or quit on its own before you could even hit "play". I didn't want to
